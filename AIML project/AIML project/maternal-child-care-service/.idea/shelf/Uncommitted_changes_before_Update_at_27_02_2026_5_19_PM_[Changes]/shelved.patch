@@ -1,0 +1,40 @@
+Index: src/main/java/com/maternalcare/demo/model/TestEntity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/maternalcare/demo/model/TestEntity.java b/src/main/java/com/maternalcare/demo/model/TestEntity.java
+new file mode 100644
+--- /dev/null	(date 1772192666522)
++++ b/src/main/java/com/maternalcare/demo/model/TestEntity.java	(date 1772192666522)
+@@ -0,0 +1,17 @@
++package com.maternalcare.demo.model;
++
++
++import jakarta.persistence.*;
++
++@Entity
++@Table(name = "test_table")
++public class TestEntity {
++
++    @Id
++    @GeneratedValue(strategy = GenerationType.IDENTITY)
++    private Long id;
++
++    private String name;
++
++    // getters & setters
++}
+Index: src/main/resources/application.properties
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>spring.application.name=maternal-care\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/resources/application.properties b/src/main/resources/application.properties
+--- a/src/main/resources/application.properties	(revision 585fa403c3d01b2b89d39733f7ec95bb8a83d1c4)
++++ b/src/main/resources/application.properties	(date 1772192666531)
+@@ -1,1 +1,1 @@
+-spring.application.name=maternal-care
++spring.application.name=demo

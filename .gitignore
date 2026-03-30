@@ -9,18 +9,13 @@ target/
 .settings/
 bin/
 out/
-*.iml
 
 # IDE
-.vscode/
-.idea/
-*.swp
-*.swo
+.swp
+.swo
 
 # Node/npm
 node_modules/
-package-lock.json
-dist/
 
 # Environment
 .env
@@ -30,8 +25,5 @@ dist/
 .DS_Store
 Thumbs.db
 
-# Git
-.git/
-
-# Nested repo
-AIML\ project/AIML\ project/
+# Dev artifacts (pick what to exclude)
+mvn_*.txt

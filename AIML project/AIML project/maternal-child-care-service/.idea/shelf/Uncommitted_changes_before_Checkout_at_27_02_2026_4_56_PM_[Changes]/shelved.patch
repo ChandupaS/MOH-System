@@ -1,0 +1,52 @@
+Index: src/main/resources/application.properties
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>spring.application.name=demo\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/resources/application.properties b/src/main/resources/application.properties
+--- a/src/main/resources/application.properties	(revision da111c4c508e794a3384304c03360b5ec0d89148)
++++ b/src/main/resources/application.properties	(date 1772191375194)
+@@ -1,1 +1,14 @@
+ spring.application.name=demo
++
++
++
++# Supabase Session Pooler
++spring.datasource.url=jdbc:postgresql://aws-1-ap-northeast-1.pooler.supabase.com:5432/postgres
++spring.datasource.username=postgres.jberdyjdgtkeljuyuzgd
++spring.datasource.password=SLIITAI0102G18
++spring.datasource.driver-class-name=org.postgresql.Driver
++
++# JPA / Hibernate
++spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
++spring.jpa.hibernate.ddl-auto=update
++spring.jpa.show-sql=true
+Index: src/main/java/com/maternalcare/demo/model/TestEntity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/maternalcare/demo/model/TestEntity.java b/src/main/java/com/maternalcare/demo/model/TestEntity.java
+new file mode 100644
+--- /dev/null	(date 1772191474747)
++++ b/src/main/java/com/maternalcare/demo/model/TestEntity.java	(date 1772191474747)
+@@ -0,0 +1,17 @@
++package com.maternalcare.demo.model;
++
++
++import jakarta.persistence.*;
++
++@Entity
++@Table(name = "test_table")
++public class TestEntity {
++
++    @Id
++    @GeneratedValue(strategy = GenerationType.IDENTITY)
++    private Long id;
++
++    private String name;
++
++    // getters & setters
++}

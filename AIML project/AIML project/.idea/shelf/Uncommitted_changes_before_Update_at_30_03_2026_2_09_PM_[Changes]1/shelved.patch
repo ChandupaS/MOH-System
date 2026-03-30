@@ -1,0 +1,1422 @@
+Index: maternal-child-care-service/src/main/java/com/maternalcare/entities/MonitorsHealthRecord.java
+===================================================================
+diff --git a/maternal-child-care-service/src/main/java/com/maternalcare/entities/MonitorsHealthRecord.java b/maternal-child-care-service/src/main/java/com/maternalcare/entities/MonitorsHealthRecord.java
+deleted file mode 100644
+--- a/maternal-child-care-service/src/main/java/com/maternalcare/entities/MonitorsHealthRecord.java	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
++++ /dev/null	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
+@@ -1,25 +0,0 @@
+-package com.maternalcare.entities;
+-
+-import jakarta.persistence.*;
+-import lombok.Data;
+-import lombok.NoArgsConstructor;
+-
+-@Entity
+-@Table(name = "monitors_health_record")
+-@Data
+-@NoArgsConstructor
+-public class MonitorsHealthRecord {
+-
+-    @EmbeddedId
+-    private MonitorsHealthRecordId id;
+-
+-    @ManyToOne
+-    @MapsId("eld")
+-    @JoinColumn(name = "eld")
+-    private MidWife midWife;
+-
+-    @ManyToOne
+-    @MapsId("rId")
+-    @JoinColumn(name = "rId")
+-    private HealthRecord healthRecord;
+-}
+\ No newline at end of file
+Index: maternal-child-care-service/src/main/java/com/maternalcare/entities/MonitorsHealthRecordId.java
+===================================================================
+diff --git a/maternal-child-care-service/src/main/java/com/maternalcare/entities/MonitorsHealthRecordId.java b/maternal-child-care-service/src/main/java/com/maternalcare/entities/MonitorsHealthRecordId.java
+deleted file mode 100644
+--- a/maternal-child-care-service/src/main/java/com/maternalcare/entities/MonitorsHealthRecordId.java	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
++++ /dev/null	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
+@@ -1,14 +0,0 @@
+-package com.maternalcare.entities;
+-
+-import jakarta.persistence.Embeddable;
+-import lombok.Data;
+-import lombok.NoArgsConstructor;
+-import java.io.Serializable;
+-
+-@Embeddable
+-@Data
+-@NoArgsConstructor
+-public class MonitorsHealthRecordId implements Serializable {
+-    private Integer eld;
+-    private Integer rId;
+-}
+\ No newline at end of file
+Index: maternal-child-care-service/frontend/src/components/MotherDashboard.css
+===================================================================
+diff --git a/maternal-child-care-service/frontend/src/components/MotherDashboard.css b/maternal-child-care-service/frontend/src/components/MotherDashboard.css
+deleted file mode 100644
+--- a/maternal-child-care-service/frontend/src/components/MotherDashboard.css	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
++++ /dev/null	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
+@@ -1,296 +0,0 @@
+-.dashboard-container {
+-  display: flex;
+-  height: 100vh;
+-  width: 100vw;
+-  background-color: #ffffff;
+-  font-family: 'Inter', sans-serif;
+-  color: #333;
+-}
+-
+-.sidebar {
+-  width: 260px;
+-  background-color: #8bbdc2;
+-  display: flex;
+-  flex-direction: column;
+-  padding-top: 2rem;
+-  box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+-}
+-
+-.sidebar-avatar {
+-  background-color: #d1d8f5;
+-  width: 60px;
+-  height: 60px;
+-  border-radius: 50%;
+-  display: flex;
+-  align-items: center;
+-  justify-content: center;
+-  margin: 0 auto 3rem auto;
+-}
+-
+-.sidebar-avatar svg {
+-  color: #7b8de6;
+-  width: 32px;
+-  height: 32px;
+-}
+-
+-.nav-item {
+-  display: flex;
+-  align-items: center;
+-  padding: 12px 24px;
+-  margin-bottom: 8px;
+-  cursor: pointer;
+-  color: white;
+-  font-weight: 600;
+-  transition: background-color 0.2s;
+-  font-size: 14px;
+-}
+-
+-.nav-item svg {
+-  margin-right: 12px;
+-  width: 18px;
+-  height: 18px;
+-}
+-
+-.nav-item.active {
+-  background-color: #12828b;
+-  border-radius: 0 25px 25px 0;
+-  margin-right: 20px;
+-}
+-
+-.nav-item:hover:not(.active) {
+-  background-color: rgba(255, 255, 255, 0.1);
+-  border-radius: 0 25px 25px 0;
+-  margin-right: 20px;
+-}
+-
+-/* Main Content */
+-.main-content {
+-  flex: 1;
+-  padding: 2rem 4rem;
+-  overflow-y: auto;
+-}
+-
+-.header {
+-  display: flex;
+-  justify-content: space-between;
+-  align-items: center;
+-  margin-bottom: 1rem;
+-}
+-
+-.header h1 {
+-  font-size: 28px;
+-  font-weight: 700;
+-  margin: 0;
+-}
+-
+-.header-icons {
+-  display: flex;
+-  gap: 16px;
+-  align-items: center;
+-}
+-
+-.icon-btn {
+-  background: none;
+-  border: none;
+-  cursor: pointer;
+-  color: #333;
+-  display: flex;
+-  align-items: center;
+-  justify-content: center;
+-}
+-
+-.back-btn {
+-  border: 1px solid #1ba5aa;
+-  border-radius: 50%;
+-  width: 40px;
+-  height: 40px;
+-  color: #1ba5aa;
+-}
+-
+-.divider {
+-  height: 2px;
+-  background-color: #1ba5aa;
+-  margin-bottom: 2rem;
+-  width: 100%;
+-}
+-
+-.appointments-section {
+-  display: flex;
+-  gap: 3rem;
+-  margin-bottom: 3rem;
+-}
+-
+-.calendar-wrapper {
+-  flex: 1;
+-}
+-
+-.calendar-wrapper h2 {
+-  font-size: 20px;
+-  margin-bottom: 1rem;
+-}
+-
+-.calendar-box {
+-  background-color: #2b2b2b;
+-  border-radius: 12px;
+-  padding: 1.5rem;
+-  color: white;
+-  width: 300px;
+-  min-height: 250px;
+-}
+-
+-.calendar-header {
+-  display: flex;
+-  justify-content: space-between;
+-  align-items: center;
+-  margin-bottom: 1.5rem;
+-}
+-
+-.calendar-selects {
+-  display: flex;
+-  gap: 8px;
+-}
+-
+-.calendar-selects select {
+-  background: #3a3a3a;
+-  color: white;
+-  border: none;
+-  padding: 4px 8px;
+-  border-radius: 4px;
+-  font-size: 13px;
+-}
+-
+-.calendar-grid {
+-  display: grid;
+-  grid-template-columns: repeat(7, 1fr);
+-  gap: 8px;
+-  text-align: center;
+-  font-size: 13px;
+-}
+-
+-.calendar-day-header {
+-  font-weight: 500;
+-  color: #999;
+-  margin-bottom: 8px;
+-}
+-
+-.calendar-day {
+-  width: 28px;
+-  height: 28px;
+-  display: flex;
+-  align-items: center;
+-  justify-content: center;
+-  border-radius: 4px;
+-}
+-
+-.calendar-day.active {
+-  background-color: white;
+-  color: black;
+-  font-weight: bold;
+-}
+-
+-.calendar-day.muted {
+-  color: #666;
+-}
+-
+-.appointments-list {
+-  flex: 1;
+-}
+-
+-.appointments-list h3 {
+-  font-size: 18px;
+-  color: #1ba5aa;
+-  margin-bottom: 1rem;
+-  margin-top: 0;
+-}
+-
+-.appointment-item {
+-  display: flex;
+-  align-items: center;
+-  gap: 12px;
+-  margin-bottom: 12px;
+-}
+-
+-.appointment-badge {
+-  background-color: #efefef;
+-  padding: 6px 16px;
+-  border-radius: 20px;
+-  font-size: 13px;
+-  color: #333;
+-}
+-
+-.cancel-btn {
+-  background-color: #1ba5aa;
+-  color: white;
+-  border: none;
+-  padding: 6px 16px;
+-  border-radius: 20px;
+-  font-size: 13px;
+-  cursor: pointer;
+-  transition: opacity 0.2s;
+-}
+-
+-.cancel-btn:hover {
+-  opacity: 0.8;
+-}
+-
+-.details-section {
+-  display: flex;
+-  flex-direction: column;
+-}
+-
+-.details-header {
+-  font-size: 20px;
+-  font-weight: bold;
+-  margin-bottom: 1rem;
+-  border-bottom: 1px solid #1ba5aa;
+-  padding-bottom: 8px;
+-  display: flex;
+-  justify-content: space-between;
+-}
+-
+-.mother-details-container {
+-  display: flex;
+-  justify-content: space-between;
+-}
+-
+-.details-grid {
+-  display: grid;
+-  grid-template-columns: 1fr;
+-  row-gap: 12px;
+-}
+-
+-.detail-row {
+-  display: flex;
+-  gap: 8px;
+-  font-size: 15px;
+-}
+-
+-.detail-label {
+-  width: 200px;
+-  color: #333;
+-}
+-
+-.detail-value {
+-  color: #666;
+-}
+-
+-.large-avatar {
+-  width: 100px;
+-  height: 100px;
+-  background-color: #51989c;
+-  border-radius: 50%;
+-  display: flex;
+-  align-items: center;
+-  justify-content: center;
+-  margin-top: -20px;
+-}
+-
+-.large-avatar svg {
+-  color: white;
+-  width: 60px;
+-  height: 60px;
+-}
+-
+-.child-details {
+-  margin-top: 3rem;
+-}
+Index: maternal-child-care-service/src/main/java/com/maternalcare/entities/Manages.java
+===================================================================
+diff --git a/maternal-child-care-service/src/main/java/com/maternalcare/entities/Manages.java b/maternal-child-care-service/src/main/java/com/maternalcare/entities/Manages.java
+deleted file mode 100644
+--- a/maternal-child-care-service/src/main/java/com/maternalcare/entities/Manages.java	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
++++ /dev/null	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
+@@ -1,25 +0,0 @@
+-package com.maternalcare.entities;
+-
+-import jakarta.persistence.*;
+-import lombok.Data;
+-import lombok.NoArgsConstructor;
+-
+-@Entity
+-@Table(name = "manages")
+-@Data
+-@NoArgsConstructor
+-public class Manages {
+-
+-    @EmbeddedId
+-    private ManagesId id;
+-
+-    @ManyToOne
+-    @MapsId("eld")
+-    @JoinColumn(name = "eld")
+-    private MidWife midWife;
+-
+-    @ManyToOne
+-    @MapsId("itemId")
+-    @JoinColumn(name = "itemId")
+-    private VaccinationNutritionSupply vaccinationNutritionSupply;
+-}
+\ No newline at end of file
+Index: maternal-child-care-service/src/main/java/com/maternalcare/entities/MidWife.java
+===================================================================
+diff --git a/maternal-child-care-service/src/main/java/com/maternalcare/entities/MidWife.java b/maternal-child-care-service/src/main/java/com/maternalcare/entities/MidWife.java
+deleted file mode 100644
+--- a/maternal-child-care-service/src/main/java/com/maternalcare/entities/MidWife.java	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
++++ /dev/null	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
+@@ -1,22 +0,0 @@
+-package com.maternalcare.entities;
+-
+-import jakarta.persistence.*;
+-import lombok.Data;
+-import lombok.NoArgsConstructor;
+-
+-@Entity
+-@Table(name = "mid_wife")
+-@Data
+-@NoArgsConstructor
+-public class MidWife {
+-
+-    @Id
+-    private Integer eld;
+-
+-    private String assignedArea;
+-
+-    @OneToOne
+-    @MapsId
+-    @JoinColumn(name = "eld")
+-    private HealthCareWorker healthCareWorker;
+-}
+\ No newline at end of file
+Index: maternal-child-care-service/src/main/java/com/maternalcare/entities/VaccinationNutritionSupply.java
+===================================================================
+diff --git a/maternal-child-care-service/src/main/java/com/maternalcare/entities/VaccinationNutritionSupply.java b/maternal-child-care-service/src/main/java/com/maternalcare/entities/VaccinationNutritionSupply.java
+deleted file mode 100644
+--- a/maternal-child-care-service/src/main/java/com/maternalcare/entities/VaccinationNutritionSupply.java	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
++++ /dev/null	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
+@@ -1,32 +0,0 @@
+-package com.maternalcare.entities;
+-
+-import jakarta.persistence.*;
+-import lombok.Data;
+-import lombok.NoArgsConstructor;
+-import java.time.LocalDate;
+-
+-@Entity
+-@Table(name = "vaccination_nutrition_supply")
+-@Data
+-@NoArgsConstructor
+-public class VaccinationNutritionSupply {
+-
+-    @Id
+-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+-    private Integer itemId;
+-
+-
+-
+-    private LocalDate exDate;
+-
+-    private LocalDate mdDate;
+-
+-    private String details;
+-
+-    @ManyToOne
+-    @JoinColumn(name = "eld")
+-    private Doctor doctor;
+-
+-    @Column(nullable = false)
+-    private Integer stock;  // teammate should validate stock >= 0 in service
+-}
+\ No newline at end of file
+Index: maternal-child-care-service/src/main/java/com/maternalcare/repositories/ManagesRepository.java
+===================================================================
+diff --git a/maternal-child-care-service/src/main/java/com/maternalcare/repositories/ManagesRepository.java b/maternal-child-care-service/src/main/java/com/maternalcare/repositories/ManagesRepository.java
+deleted file mode 100644
+--- a/maternal-child-care-service/src/main/java/com/maternalcare/repositories/ManagesRepository.java	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
++++ /dev/null	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
+@@ -1,11 +0,0 @@
+-package com.maternalcare.repositories;
+-
+-import com.maternalcare.entities.Manages;
+-import com.maternalcare.entities.ManagesId;
+-import org.springframework.data.jpa.repository.JpaRepository;
+-import org.springframework.stereotype.Repository;
+-
+-@Repository
+-public interface ManagesRepository extends JpaRepository<Manages, ManagesId> {
+-
+-}
+\ No newline at end of file
+Index: maternal-child-care-service/src/main/java/com/maternalcare/controllers/AppointmentController.java
+===================================================================
+diff --git a/maternal-child-care-service/src/main/java/com/maternalcare/controllers/AppointmentController.java b/maternal-child-care-service/src/main/java/com/maternalcare/controllers/AppointmentController.java
+deleted file mode 100644
+--- a/maternal-child-care-service/src/main/java/com/maternalcare/controllers/AppointmentController.java	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
++++ /dev/null	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
+@@ -1,56 +0,0 @@
+-package com.maternalcare.controllers;
+-
+-import com.maternalcare.entities.Appointment;
+-import com.maternalcare.services.impl.AppointmentServicesImpl;
+-import lombok.RequiredArgsConstructor;
+-import org.springframework.web.bind.annotation.*;
+-import java.util.List;
+-
+-@RestController
+-@CrossOrigin(origins = "*")
+-@RequestMapping(path = "/api/v1/appointments")
+-@RequiredArgsConstructor
+-public class AppointmentController {
+-
+-    private final AppointmentServicesImpl appointmentService;
+-
+-    @GetMapping
+-    public List<Appointment> getAllAppointments() {
+-        return appointmentService.getAllAppointments();
+-    }
+-
+-    @GetMapping("/{id}")
+-    public Appointment getAppointmentById(@PathVariable Integer id) {
+-        return appointmentService.getAppointmentById(id);
+-    }
+-
+-    @GetMapping("/mother/{motherId}")
+-    public List<Appointment> getAppointmentsByMotherId(@PathVariable Integer motherId) {
+-        return appointmentService.getAppointmentsByMotherId(motherId);
+-    }
+-
+-    @GetMapping("/mother/{motherId}/upcoming")
+-    public List<Appointment> getUpcomingAppointmentsByMotherId(@PathVariable Integer motherId) {
+-        return appointmentService.getUpcomingAppointmentsByMotherId(motherId);
+-    }
+-
+-    @GetMapping("/mother/{motherId}/past")
+-    public List<Appointment> getPastAppointmentsByMotherId(@PathVariable Integer motherId) {
+-        return appointmentService.getPastAppointmentsByMotherId(motherId);
+-    }
+-
+-    @PostMapping
+-    public Appointment createAppointment(@RequestBody Appointment appointment) {
+-        return appointmentService.createAppointment(appointment);
+-    }
+-
+-    @PatchMapping("/{id}")
+-    public Appointment updateAppointment(@PathVariable Integer id, @RequestBody Appointment appointment) {
+-        return appointmentService.updateAppointment(id, appointment);
+-    }
+-
+-    @DeleteMapping("/{id}")
+-    public Appointment deleteAppointment(@PathVariable Integer id) {
+-        return appointmentService.deleteAppointment(id);
+-    }
+-}
+\ No newline at end of file
+Index: maternal-child-care-service/src/main/java/com/maternalcare/repositories/VaccinationNutritionSupplyRepository.java
+===================================================================
+diff --git a/maternal-child-care-service/src/main/java/com/maternalcare/repositories/VaccinationNutritionSupplyRepository.java b/maternal-child-care-service/src/main/java/com/maternalcare/repositories/VaccinationNutritionSupplyRepository.java
+deleted file mode 100644
+--- a/maternal-child-care-service/src/main/java/com/maternalcare/repositories/VaccinationNutritionSupplyRepository.java	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
++++ /dev/null	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
+@@ -1,10 +0,0 @@
+-package com.maternalcare.repositories;
+-
+-import com.maternalcare.entities.VaccinationNutritionSupply;
+-import org.springframework.data.jpa.repository.JpaRepository;
+-import org.springframework.stereotype.Repository;
+-
+-@Repository
+-public interface VaccinationNutritionSupplyRepository extends JpaRepository<VaccinationNutritionSupply, Integer> {
+-
+-}
+\ No newline at end of file
+Index: maternal-child-care-service/src/main/java/com/maternalcare/services/impl/AppointmentServicesImpl.java
+===================================================================
+diff --git a/maternal-child-care-service/src/main/java/com/maternalcare/services/impl/AppointmentServicesImpl.java b/maternal-child-care-service/src/main/java/com/maternalcare/services/impl/AppointmentServicesImpl.java
+deleted file mode 100644
+--- a/maternal-child-care-service/src/main/java/com/maternalcare/services/impl/AppointmentServicesImpl.java	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
++++ /dev/null	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
+@@ -1,56 +0,0 @@
+-package com.maternalcare.services.impl;
+-
+-import com.maternalcare.entities.Appointment;
+-import com.maternalcare.repositories.AppointmentRepository;
+-import com.maternalcare.services.AppointmentServices;
+-import lombok.RequiredArgsConstructor;
+-import org.springframework.stereotype.Service;
+-import java.time.LocalDateTime;
+-import java.util.List;
+-
+-@Service
+-@RequiredArgsConstructor
+-public class AppointmentServicesImpl implements AppointmentServices {
+-
+-    private final AppointmentRepository appointmentRepository;
+-
+-    public List<Appointment> getAllAppointments() {
+-        return appointmentRepository.findAll();
+-    }
+-
+-    public Appointment getAppointmentById(Integer id) {
+-        return appointmentRepository.findById(id)
+-                .orElseThrow(() -> new RuntimeException("Appointment not found with id: " + id));
+-    }
+-
+-    public List<Appointment> getAppointmentsByMotherId(Integer motherId) {
+-        return appointmentRepository.findByMotherId(motherId);
+-    }
+-
+-    public List<Appointment> getUpcomingAppointmentsByMotherId(Integer motherId) {
+-        return appointmentRepository.findUpcomingByMotherId(motherId, LocalDateTime.now());
+-    }
+-
+-    public List<Appointment> getPastAppointmentsByMotherId(Integer motherId) {
+-        return appointmentRepository.findPastByMotherId(motherId, LocalDateTime.now());
+-    }
+-
+-    public Appointment createAppointment(Appointment appointment) {
+-        return appointmentRepository.save(appointment);
+-    }
+-
+-    public Appointment updateAppointment(Integer id, Appointment appointmentDetails) {
+-        Appointment appointment = getAppointmentById(id);
+-        appointment.setStatus(appointmentDetails.getStatus());
+-        appointment.setScheduleDate(appointmentDetails.getScheduleDate());
+-        appointment.setPurpose(appointmentDetails.getPurpose());
+-        appointment.setDoctor(appointmentDetails.getDoctor());
+-        return appointmentRepository.save(appointment);
+-    }
+-
+-    public Appointment deleteAppointment(Integer id) {
+-        Appointment appointment = getAppointmentById(id);
+-        appointmentRepository.deleteById(id);
+-        return appointment;
+-    }
+-}
+\ No newline at end of file
+Index: maternal-child-care-service/src/main/java/com/maternalcare/entities/MonitorsId.java
+===================================================================
+diff --git a/maternal-child-care-service/src/main/java/com/maternalcare/entities/MonitorsId.java b/maternal-child-care-service/src/main/java/com/maternalcare/entities/MonitorsId.java
+deleted file mode 100644
+--- a/maternal-child-care-service/src/main/java/com/maternalcare/entities/MonitorsId.java	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
++++ /dev/null	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
+@@ -1,14 +0,0 @@
+-package com.maternalcare.entities;
+-
+-import jakarta.persistence.Embeddable;
+-import lombok.Data;
+-import lombok.NoArgsConstructor;
+-import java.io.Serializable;
+-
+-@Embeddable
+-@Data
+-@NoArgsConstructor
+-public class MonitorsId implements Serializable {
+-    private Integer eld;
+-    private Integer motherId;
+-}
+\ No newline at end of file
+Index: maternal-child-care-service/src/main/java/com/maternalcare/repositories/MidWifeRepository.java
+===================================================================
+diff --git a/maternal-child-care-service/src/main/java/com/maternalcare/repositories/MidWifeRepository.java b/maternal-child-care-service/src/main/java/com/maternalcare/repositories/MidWifeRepository.java
+deleted file mode 100644
+--- a/maternal-child-care-service/src/main/java/com/maternalcare/repositories/MidWifeRepository.java	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
++++ /dev/null	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
+@@ -1,10 +0,0 @@
+-package com.maternalcare.repositories;
+-
+-import com.maternalcare.entities.MidWife;
+-import org.springframework.data.jpa.repository.JpaRepository;
+-import org.springframework.stereotype.Repository;
+-
+-@Repository
+-public interface MidWifeRepository extends JpaRepository<MidWife, Integer> {
+-
+-}
+\ No newline at end of file
+Index: maternal-child-care-service/src/main/java/com/maternalcare/repositories/MonitorsRepository.java
+===================================================================
+diff --git a/maternal-child-care-service/src/main/java/com/maternalcare/repositories/MonitorsRepository.java b/maternal-child-care-service/src/main/java/com/maternalcare/repositories/MonitorsRepository.java
+deleted file mode 100644
+--- a/maternal-child-care-service/src/main/java/com/maternalcare/repositories/MonitorsRepository.java	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
++++ /dev/null	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
+@@ -1,11 +0,0 @@
+-package com.maternalcare.repositories;
+-
+-import com.maternalcare.entities.Monitors;
+-import com.maternalcare.entities.MonitorsId;
+-import org.springframework.data.jpa.repository.JpaRepository;
+-import org.springframework.stereotype.Repository;
+-
+-@Repository
+-public interface MonitorsRepository extends JpaRepository<Monitors, MonitorsId> {
+-
+-}
+\ No newline at end of file
+Index: maternal-child-care-service/src/main/java/com/maternalcare/repositories/ChildRepository.java
+===================================================================
+diff --git a/maternal-child-care-service/src/main/java/com/maternalcare/repositories/ChildRepository.java b/maternal-child-care-service/src/main/java/com/maternalcare/repositories/ChildRepository.java
+deleted file mode 100644
+--- a/maternal-child-care-service/src/main/java/com/maternalcare/repositories/ChildRepository.java	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
++++ /dev/null	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
+@@ -1,12 +0,0 @@
+-package com.maternalcare.repositories;
+-
+-import com.maternalcare.entities.Child;
+-import org.springframework.data.jpa.repository.JpaRepository;
+-import org.springframework.stereotype.Repository;
+-
+-import java.util.List;
+-
+-@Repository
+-public interface ChildRepository extends JpaRepository<Child, Integer> {
+-    List<Child> findByMotherId(Integer motherId);
+-}
+\ No newline at end of file
+Index: maternal-child-care-service/src/main/java/com/maternalcare/repositories/ChildRecordRepository.java
+===================================================================
+diff --git a/maternal-child-care-service/src/main/java/com/maternalcare/repositories/ChildRecordRepository.java b/maternal-child-care-service/src/main/java/com/maternalcare/repositories/ChildRecordRepository.java
+deleted file mode 100644
+--- a/maternal-child-care-service/src/main/java/com/maternalcare/repositories/ChildRecordRepository.java	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
++++ /dev/null	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
+@@ -1,10 +0,0 @@
+-package com.maternalcare.repositories;
+-
+-import com.maternalcare.entities.ChildRecord;
+-import org.springframework.data.jpa.repository.JpaRepository;
+-import org.springframework.stereotype.Repository;
+-
+-@Repository
+-public interface ChildRecordRepository extends JpaRepository<ChildRecord, Integer> {
+-
+-}
+\ No newline at end of file
+Index: maternal-child-care-service/src/main/java/com/maternalcare/repositories/AppointmentRepository.java
+===================================================================
+diff --git a/maternal-child-care-service/src/main/java/com/maternalcare/repositories/AppointmentRepository.java b/maternal-child-care-service/src/main/java/com/maternalcare/repositories/AppointmentRepository.java
+deleted file mode 100644
+--- a/maternal-child-care-service/src/main/java/com/maternalcare/repositories/AppointmentRepository.java	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
++++ /dev/null	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
+@@ -1,23 +0,0 @@
+-package com.maternalcare.repositories;
+-
+-import com.maternalcare.entities.Appointment;
+-import org.springframework.data.jpa.repository.JpaRepository;
+-import org.springframework.data.jpa.repository.Query;
+-import org.springframework.data.repository.query.Param;
+-import org.springframework.stereotype.Repository;
+-
+-import java.time.LocalDateTime;
+-import java.util.List;
+-
+-@Repository
+-public interface AppointmentRepository extends JpaRepository<Appointment, Integer> {
+-    List<Appointment> findByMotherId(Integer motherId);
+-
+-    List<Appointment> findByMotherIdAndStatus(Integer motherId, String status);
+-
+-    @Query("SELECT a FROM Appointment a WHERE a.mother.id = :motherId AND a.scheduleDate >= :now ORDER BY a.scheduleDate ASC")
+-    List<Appointment> findUpcomingByMotherId(@Param("motherId") Integer motherId, @Param("now") LocalDateTime now);
+-
+-    @Query("SELECT a FROM Appointment a WHERE a.mother.id = :motherId AND a.scheduleDate < :now OR a.status = 'MISSED' ORDER BY a.scheduleDate DESC")
+-    List<Appointment> findPastByMotherId(@Param("motherId") Integer motherId, @Param("now") LocalDateTime now);
+-}
+\ No newline at end of file
+Index: maternal-child-care-service/src/main/java/com/maternalcare/entities/Alert.java
+===================================================================
+diff --git a/maternal-child-care-service/src/main/java/com/maternalcare/entities/Alert.java b/maternal-child-care-service/src/main/java/com/maternalcare/entities/Alert.java
+deleted file mode 100644
+--- a/maternal-child-care-service/src/main/java/com/maternalcare/entities/Alert.java	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
++++ /dev/null	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
+@@ -1,30 +0,0 @@
+-package com.maternalcare.entities;
+-
+-import jakarta.persistence.*;
+-import lombok.Data;
+-import lombok.NoArgsConstructor;
+-import java.time.LocalDateTime;
+-
+-@Entity
+-@Table(name = "alert")
+-@Data
+-@NoArgsConstructor
+-public class Alert {
+-
+-    @Id
+-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+-    private Integer alertId;
+-
+-    @Column(nullable = false, updatable = false)
+-    private LocalDateTime timeStamp = LocalDateTime.now();
+-
+-    @Column(length = 50)
+-    private String type;
+-
+-    @Column(length = 500)
+-    private String message;
+-
+-    @ManyToOne
+-    @JoinColumn(name = "eld")
+-    private Doctor doctor;
+-}
+\ No newline at end of file
+Index: maternal-child-care-service/src/main/java/com/maternalcare/repositories/DoctorRepository.java
+===================================================================
+diff --git a/maternal-child-care-service/src/main/java/com/maternalcare/repositories/DoctorRepository.java b/maternal-child-care-service/src/main/java/com/maternalcare/repositories/DoctorRepository.java
+deleted file mode 100644
+--- a/maternal-child-care-service/src/main/java/com/maternalcare/repositories/DoctorRepository.java	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
++++ /dev/null	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
+@@ -1,10 +0,0 @@
+-package com.maternalcare.repositories;
+-
+-import com.maternalcare.entities.Doctor;
+-import org.springframework.data.jpa.repository.JpaRepository;
+-import org.springframework.stereotype.Repository;
+-
+-@Repository
+-public interface DoctorRepository extends JpaRepository<Doctor, Integer> {
+-
+-}
+\ No newline at end of file
+Index: maternal-child-care-service/src/main/java/com/maternalcare/entities/Doctor.java
+===================================================================
+diff --git a/maternal-child-care-service/src/main/java/com/maternalcare/entities/Doctor.java b/maternal-child-care-service/src/main/java/com/maternalcare/entities/Doctor.java
+deleted file mode 100644
+--- a/maternal-child-care-service/src/main/java/com/maternalcare/entities/Doctor.java	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
++++ /dev/null	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
+@@ -1,24 +0,0 @@
+-package com.maternalcare.entities;
+-
+-import jakarta.persistence.*;
+-import lombok.Data;
+-import lombok.NoArgsConstructor;
+-
+-@Entity
+-@Table(name = "doctor")
+-@Data
+-@NoArgsConstructor
+-public class Doctor {
+-
+-    @Id
+-    private Integer eld;
+-
+-    private Integer licenseNo;
+-
+-    private String specialization;
+-
+-    @OneToOne
+-    @MapsId
+-    @JoinColumn(name = "eld")
+-    private HealthCareWorker healthCareWorker;
+-}
+\ No newline at end of file
+Index: maternal-child-care-service/src/main/java/com/maternalcare/entities/Mother.java
+===================================================================
+diff --git a/maternal-child-care-service/src/main/java/com/maternalcare/entities/Mother.java b/maternal-child-care-service/src/main/java/com/maternalcare/entities/Mother.java
+deleted file mode 100644
+--- a/maternal-child-care-service/src/main/java/com/maternalcare/entities/Mother.java	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
++++ /dev/null	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
+@@ -1,41 +0,0 @@
+-package com.maternalcare.entities;
+-
+-import jakarta.persistence.*;
+-import lombok.Data;
+-import lombok.NoArgsConstructor;
+-import java.time.LocalDate;
+-import java.util.List;
+-
+-@Entity
+-@Table(name = "mother")
+-@Data
+-@NoArgsConstructor
+-public class Mother {
+-
+-    @Id
+-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+-    private Integer id;
+-
+-    @Column(nullable = false)
+-    private String pregnancyStatus;
+-
+-    @Column(nullable = false)
+-    private String bloodGroup;
+-
+-    private LocalDate expcDueDate;
+-
+-    @ManyToOne
+-    @JoinColumn(name = "rId")
+-    private HealthRecord healthRecord;
+-
+-    @OneToOne
+-    @JoinColumn(name = "user_id")  // Link to User table
+-    private User user;
+-
+-    @OneToMany(mappedBy = "mother")
+-    private List<Appointment> appointments;
+-
+-    @OneToMany(mappedBy = "mother")
+-    private List<Child> children;
+-
+-}
+\ No newline at end of file
+Index: maternal-child-care-service/src/main/java/com/maternalcare/repositories/AlertRepository.java
+===================================================================
+diff --git a/maternal-child-care-service/src/main/java/com/maternalcare/repositories/AlertRepository.java b/maternal-child-care-service/src/main/java/com/maternalcare/repositories/AlertRepository.java
+deleted file mode 100644
+--- a/maternal-child-care-service/src/main/java/com/maternalcare/repositories/AlertRepository.java	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
++++ /dev/null	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
+@@ -1,10 +0,0 @@
+-package com.maternalcare.repositories;
+-
+-import com.maternalcare.entities.Alert;
+-import org.springframework.data.jpa.repository.JpaRepository;
+-import org.springframework.stereotype.Repository;
+-
+-@Repository
+-public interface AlertRepository extends JpaRepository<Alert, Integer> {
+-
+-}
+\ No newline at end of file
+Index: maternal-child-care-service/src/main/java/com/maternalcare/entities/HealthRecord.java
+===================================================================
+diff --git a/maternal-child-care-service/src/main/java/com/maternalcare/entities/HealthRecord.java b/maternal-child-care-service/src/main/java/com/maternalcare/entities/HealthRecord.java
+deleted file mode 100644
+--- a/maternal-child-care-service/src/main/java/com/maternalcare/entities/HealthRecord.java	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
++++ /dev/null	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
+@@ -1,26 +0,0 @@
+-package com.maternalcare.entities;
+-
+-import jakarta.persistence.*;
+-import lombok.Data;
+-import lombok.NoArgsConstructor;
+-import java.time.LocalDate;
+-
+-@Entity
+-@Table(name = "health_record")
+-@Data
+-@NoArgsConstructor
+-public class HealthRecord {
+-
+-    @Id
+-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+-    private Integer rId;
+-
+-    private LocalDate date;
+-
+-    private Float weight;
+-
+-    private Float height;
+-
+-    @Column(length = 500)
+-    private String symptoms;
+-}
+\ No newline at end of file
+Index: maternal-child-care-service/src/main/java/com/maternalcare/entities/Monitors.java
+===================================================================
+diff --git a/maternal-child-care-service/src/main/java/com/maternalcare/entities/Monitors.java b/maternal-child-care-service/src/main/java/com/maternalcare/entities/Monitors.java
+deleted file mode 100644
+--- a/maternal-child-care-service/src/main/java/com/maternalcare/entities/Monitors.java	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
++++ /dev/null	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
+@@ -1,25 +0,0 @@
+-package com.maternalcare.entities;
+-
+-import jakarta.persistence.*;
+-import lombok.Data;
+-import lombok.NoArgsConstructor;
+-
+-@Entity
+-@Table(name = "monitors")
+-@Data
+-@NoArgsConstructor
+-public class Monitors {
+-
+-    @EmbeddedId
+-    private MonitorsId id;
+-
+-    @ManyToOne
+-    @MapsId("eld")
+-    @JoinColumn(name = "eld")
+-    private MidWife midWife;
+-
+-    @ManyToOne
+-    @MapsId("motherId")
+-    @JoinColumn(name = "motherId")
+-    private Mother mother;
+-}
+\ No newline at end of file
+Index: maternal-child-care-service/src/main/java/com/maternalcare/services/AppointmentServices.java
+===================================================================
+diff --git a/maternal-child-care-service/src/main/java/com/maternalcare/services/AppointmentServices.java b/maternal-child-care-service/src/main/java/com/maternalcare/services/AppointmentServices.java
+deleted file mode 100644
+--- a/maternal-child-care-service/src/main/java/com/maternalcare/services/AppointmentServices.java	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
++++ /dev/null	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
+@@ -1,19 +0,0 @@
+-package com.maternalcare.services;
+-import com.maternalcare.entities.Appointment;
+-
+-import java.util.List;
+-
+-public interface AppointmentServices {
+-
+-
+-    public List<Appointment> getAllAppointments();
+-    public Appointment getAppointmentById(Integer id);
+-    public List<Appointment> getAppointmentsByMotherId(Integer motherId);
+-    public List<Appointment> getUpcomingAppointmentsByMotherId(Integer motherId);
+-    public List<Appointment> getPastAppointmentsByMotherId(Integer motherId);
+-    public Appointment createAppointment(Appointment appointment);
+-    public Appointment updateAppointment(Integer id, Appointment appointmentDetails);
+-    public Appointment deleteAppointment(Integer id);
+-
+-
+-}
+Index: maternal-child-care-service/src/main/java/com/maternalcare/services/MotherServices.java
+===================================================================
+diff --git a/maternal-child-care-service/src/main/java/com/maternalcare/services/MotherServices.java b/maternal-child-care-service/src/main/java/com/maternalcare/services/MotherServices.java
+deleted file mode 100644
+--- a/maternal-child-care-service/src/main/java/com/maternalcare/services/MotherServices.java	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
++++ /dev/null	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
+@@ -1,20 +0,0 @@
+-package com.maternalcare.services;
+-
+-import com.maternalcare.entities.Child;
+-import com.maternalcare.entities.Mother;
+-import org.springframework.stereotype.Service;
+-
+-import java.util.List;
+-
+-@Service
+-public interface MotherServices  {
+-
+-    public List<Mother> getAllMothers();
+-    public Mother getMotherById(Integer id);
+-    public Mother getMotherByUserId(Integer userId);
+-    public Mother getMotherByEmail(String email);
+-    public List<Child> getMotherChildren(Integer motherId);
+-    public Mother createMother(Mother mother);
+-    public Mother updateMother(Integer id, Mother motherDetails);
+-    public void deleteMother(Integer id);
+-}
+Index: maternal-child-care-service/src/main/java/com/maternalcare/services/impl/MotherServicesImpl.java
+===================================================================
+diff --git a/maternal-child-care-service/src/main/java/com/maternalcare/services/impl/MotherServicesImpl.java b/maternal-child-care-service/src/main/java/com/maternalcare/services/impl/MotherServicesImpl.java
+deleted file mode 100644
+--- a/maternal-child-care-service/src/main/java/com/maternalcare/services/impl/MotherServicesImpl.java	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
++++ /dev/null	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
+@@ -1,60 +0,0 @@
+-package com.maternalcare.services;
+-
+-import com.maternalcare.entities.Mother;
+-import com.maternalcare.entities.User;
+-import com.maternalcare.entities.Child;
+-import com.maternalcare.repositories.MotherRepository;
+-import com.maternalcare.repositories.UserRepository;
+-import com.maternalcare.repositories.ChildRepository;
+-import lombok.RequiredArgsConstructor;
+-import org.springframework.stereotype.Service;
+-import java.util.List;
+-
+-@Service
+-@RequiredArgsConstructor
+-public class MotherServicesImpl implements MotherServices {
+-
+-    private final MotherRepository motherRepository;
+-    private final UserRepository userRepository;
+-    private final ChildRepository childRepository;
+-
+-    public List<Mother> getAllMothers() {
+-        return motherRepository.findAll();
+-    }
+-
+-    public Mother getMotherById(Integer id) {
+-        return motherRepository.findById(id)
+-                .orElseThrow(() -> new RuntimeException("Mother not found with id: " + id));
+-    }
+-
+-    public Mother getMotherByUserId(Integer userId) {
+-        return motherRepository.findByUserId(userId)
+-                .orElseThrow(() -> new RuntimeException("Mother not found for user id: " + userId));
+-    }
+-
+-    public Mother getMotherByEmail(String email) {
+-        return motherRepository.findByUserEmail(email)
+-                .orElseThrow(() -> new RuntimeException("Mother not found for email: " + email));
+-    }
+-
+-    public List<Child> getMotherChildren(Integer motherId) {
+-        return childRepository.findByMotherId(motherId);
+-    }
+-
+-    public Mother createMother(Mother mother) {
+-        return motherRepository.save(mother);
+-    }
+-
+-    public Mother updateMother(Integer id, Mother motherDetails) {
+-        Mother mother = getMotherById(id);
+-        mother.setPregnancyStatus(motherDetails.getPregnancyStatus());
+-        mother.setBloodGroup(motherDetails.getBloodGroup());
+-        mother.setExpcDueDate(motherDetails.getExpcDueDate());
+-        mother.setHealthRecord(motherDetails.getHealthRecord());
+-        return motherRepository.save(mother);
+-    }
+-
+-    public void deleteMother(Integer id) {
+-        motherRepository.deleteById(id);
+-    }
+-}
+\ No newline at end of file
+Index: maternal-child-care-service/src/main/java/com/maternalcare/repositories/HealthCareWorkerRepository.java
+===================================================================
+diff --git a/maternal-child-care-service/src/main/java/com/maternalcare/repositories/HealthCareWorkerRepository.java b/maternal-child-care-service/src/main/java/com/maternalcare/repositories/HealthCareWorkerRepository.java
+deleted file mode 100644
+--- a/maternal-child-care-service/src/main/java/com/maternalcare/repositories/HealthCareWorkerRepository.java	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
++++ /dev/null	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
+@@ -1,10 +0,0 @@
+-package com.maternalcare.repositories;
+-
+-import com.maternalcare.entities.HealthCareWorker;
+-import org.springframework.data.jpa.repository.JpaRepository;
+-import org.springframework.stereotype.Repository;
+-
+-@Repository
+-public interface HealthCareWorkerRepository extends JpaRepository<HealthCareWorker, Integer> {
+-
+-}
+\ No newline at end of file
+Index: maternal-child-care-service/src/main/java/com/maternalcare/entities/HealthCareWorker.java
+===================================================================
+diff --git a/maternal-child-care-service/src/main/java/com/maternalcare/entities/HealthCareWorker.java b/maternal-child-care-service/src/main/java/com/maternalcare/entities/HealthCareWorker.java
+deleted file mode 100644
+--- a/maternal-child-care-service/src/main/java/com/maternalcare/entities/HealthCareWorker.java	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
++++ /dev/null	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
+@@ -1,24 +0,0 @@
+-package com.maternalcare.entities;
+-
+-import jakarta.persistence.*;
+-import lombok.Data;
+-import lombok.NoArgsConstructor;
+-
+-@Entity
+-@Table(name = "health_care_worker")
+-@Data
+-@NoArgsConstructor
+-public class HealthCareWorker {
+-
+-    @Id
+-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+-    private Integer id;
+-
+-
+-
+-    private String workplace;
+-
+-    @ManyToOne
+-    @JoinColumn(name = "eld", insertable = false, updatable = false)
+-    private User user;
+-}
+\ No newline at end of file
+Index: maternal-child-care-service/src/main/java/com/maternalcare/repositories/UserPhoneNoRepository.java
+===================================================================
+diff --git a/maternal-child-care-service/src/main/java/com/maternalcare/repositories/UserPhoneNoRepository.java b/maternal-child-care-service/src/main/java/com/maternalcare/repositories/UserPhoneNoRepository.java
+deleted file mode 100644
+--- a/maternal-child-care-service/src/main/java/com/maternalcare/repositories/UserPhoneNoRepository.java	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
++++ /dev/null	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
+@@ -1,10 +0,0 @@
+-package com.maternalcare.repositories;
+-
+-import com.maternalcare.entities.UserPhoneNo;
+-import org.springframework.data.jpa.repository.JpaRepository;
+-import org.springframework.stereotype.Repository;
+-
+-@Repository
+-public interface UserPhoneNoRepository extends JpaRepository<UserPhoneNo, Integer> {
+-
+-}
+\ No newline at end of file
+Index: maternal-child-care-service/src/main/java/com/maternalcare/entities/ManagesId.java
+===================================================================
+diff --git a/maternal-child-care-service/src/main/java/com/maternalcare/entities/ManagesId.java b/maternal-child-care-service/src/main/java/com/maternalcare/entities/ManagesId.java
+deleted file mode 100644
+--- a/maternal-child-care-service/src/main/java/com/maternalcare/entities/ManagesId.java	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
++++ /dev/null	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
+@@ -1,14 +0,0 @@
+-package com.maternalcare.entities;
+-
+-import jakarta.persistence.Embeddable;
+-import lombok.Data;
+-import lombok.NoArgsConstructor;
+-import java.io.Serializable;
+-
+-@Embeddable
+-@Data
+-@NoArgsConstructor
+-public class ManagesId implements Serializable {
+-    private Integer eld;
+-    private Integer itemId;
+-}
+\ No newline at end of file
+Index: maternal-child-care-service/src/main/java/com/maternalcare/entities/Views.java
+===================================================================
+diff --git a/maternal-child-care-service/src/main/java/com/maternalcare/entities/Views.java b/maternal-child-care-service/src/main/java/com/maternalcare/entities/Views.java
+deleted file mode 100644
+--- a/maternal-child-care-service/src/main/java/com/maternalcare/entities/Views.java	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
++++ /dev/null	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
+@@ -1,24 +0,0 @@
+-package com.maternalcare.entities;
+-
+-import jakarta.persistence.*;
+-import lombok.Data;
+-import lombok.NoArgsConstructor;
+-
+-@Entity
+-@Table(name = "views")
+-@Data
+-@NoArgsConstructor
+-public class Views {
+-
+-    @Id
+-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+-    private Integer id;
+-
+-    @ManyToOne
+-    @JoinColumn(name = "alertId")
+-    private Alert alert;
+-
+-    @ManyToOne
+-    @JoinColumn(name = "motherId")
+-    private Mother mother;
+-}
+\ No newline at end of file
+Index: maternal-child-care-service/src/main/java/com/maternalcare/repositories/HealthRecordRepository.java
+===================================================================
+diff --git a/maternal-child-care-service/src/main/java/com/maternalcare/repositories/HealthRecordRepository.java b/maternal-child-care-service/src/main/java/com/maternalcare/repositories/HealthRecordRepository.java
+deleted file mode 100644
+--- a/maternal-child-care-service/src/main/java/com/maternalcare/repositories/HealthRecordRepository.java	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
++++ /dev/null	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
+@@ -1,10 +0,0 @@
+-package com.maternalcare.repositories;
+-
+-import com.maternalcare.entities.HealthRecord;
+-import org.springframework.data.jpa.repository.JpaRepository;
+-import org.springframework.stereotype.Repository;
+-
+-@Repository
+-public interface HealthRecordRepository extends JpaRepository<HealthRecord, Integer> {
+-
+-}
+\ No newline at end of file
+Index: maternal-child-care-service/src/main/java/com/maternalcare/repositories/MotherRepository.java
+===================================================================
+diff --git a/maternal-child-care-service/src/main/java/com/maternalcare/repositories/MotherRepository.java b/maternal-child-care-service/src/main/java/com/maternalcare/repositories/MotherRepository.java
+deleted file mode 100644
+--- a/maternal-child-care-service/src/main/java/com/maternalcare/repositories/MotherRepository.java	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
++++ /dev/null	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
+@@ -1,18 +0,0 @@
+-package com.maternalcare.repositories;
+-
+-import com.maternalcare.entities.Mother;
+-import org.springframework.data.jpa.repository.JpaRepository;
+-import org.springframework.data.jpa.repository.Query;
+-import org.springframework.data.repository.query.Param;
+-import org.springframework.stereotype.Repository;
+-
+-import java.util.Optional;
+-
+-@Repository
+-public interface MotherRepository extends JpaRepository<Mother, Integer> {
+-    @Query("SELECT m FROM Mother m WHERE m.user.id = :userId")
+-    Optional<Mother> findByUserId(@Param("userId") Integer userId);
+-
+-    @Query("SELECT m FROM Mother m WHERE m.user.email = :email")
+-    Optional<Mother> findByUserEmail(@Param("email") String email);
+-}
+\ No newline at end of file
+Index: maternal-child-care-service/src/main/java/com/maternalcare/entities/UserPhoneNo.java
+===================================================================
+diff --git a/maternal-child-care-service/src/main/java/com/maternalcare/entities/UserPhoneNo.java b/maternal-child-care-service/src/main/java/com/maternalcare/entities/UserPhoneNo.java
+deleted file mode 100644
+--- a/maternal-child-care-service/src/main/java/com/maternalcare/entities/UserPhoneNo.java	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
++++ /dev/null	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
+@@ -1,21 +0,0 @@
+-package com.maternalcare.entities;
+-
+-import jakarta.persistence.*;
+-import lombok.Data;
+-import lombok.NoArgsConstructor;
+-
+-@Entity
+-@Table(name = "user_phone_no")
+-@Data
+-@NoArgsConstructor
+-public class UserPhoneNo {
+-
+-    @Id
+-    private Integer id;
+-
+-    private String phoneNumber;
+-
+-    @OneToOne
+-    @JoinColumn(name = "id", insertable = false, updatable = false)
+-    private User user;
+-}
+\ No newline at end of file
+Index: maternal-child-care-service/src/main/java/com/maternalcare/entities/Child.java
+===================================================================
+diff --git a/maternal-child-care-service/src/main/java/com/maternalcare/entities/Child.java b/maternal-child-care-service/src/main/java/com/maternalcare/entities/Child.java
+deleted file mode 100644
+--- a/maternal-child-care-service/src/main/java/com/maternalcare/entities/Child.java	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
++++ /dev/null	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
+@@ -1,28 +0,0 @@
+-package com.maternalcare.entities;
+-
+-import jakarta.persistence.*;
+-import lombok.Data;
+-import lombok.NoArgsConstructor;
+-
+-@Entity
+-@Table(name = "child")
+-@Data
+-@NoArgsConstructor
+-public class Child {
+-
+-    @Id
+-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+-    private Integer id;
+-
+-    @ManyToOne
+-    @JoinColumn(name = "rId")
+-    private HealthRecord healthRecord;
+-
+-    @ManyToOne
+-    @JoinColumn(name = "cId")
+-    private ChildRecord childRecord;
+-
+-    @ManyToOne
+-    @JoinColumn(name = "motherId")
+-    private Mother mother;
+-}
+\ No newline at end of file
+Index: maternal-child-care-service/src/main/java/com/maternalcare/entities/Appointment.java
+===================================================================
+diff --git a/maternal-child-care-service/src/main/java/com/maternalcare/entities/Appointment.java b/maternal-child-care-service/src/main/java/com/maternalcare/entities/Appointment.java
+deleted file mode 100644
+--- a/maternal-child-care-service/src/main/java/com/maternalcare/entities/Appointment.java	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
++++ /dev/null	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
+@@ -1,34 +0,0 @@
+-package com.maternalcare.entities;
+-
+-import jakarta.persistence.*;
+-import lombok.Data;
+-import lombok.NoArgsConstructor;
+-import java.time.LocalDate;
+-import java.time.LocalDateTime;
+-
+-@Entity
+-@Table(name = "appointment")
+-@Data
+-@NoArgsConstructor
+-public class Appointment {
+-
+-    @Id
+-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+-    private Integer aId;
+-
+-    @Column(nullable = false)
+-    private String status;
+-
+-    @Column(nullable = false)
+-    private LocalDateTime scheduleDate;
+-
+-    private String purpose;
+-
+-    @ManyToOne
+-    @JoinColumn(name = "eld")
+-    private Doctor doctor;
+-
+-    @ManyToOne
+-    @JoinColumn(name = "motherId")
+-    private Mother mother;
+-}
+\ No newline at end of file
+Index: maternal-child-care-service/src/main/java/com/maternalcare/entities/ChildRecord.java
+===================================================================
+diff --git a/maternal-child-care-service/src/main/java/com/maternalcare/entities/ChildRecord.java b/maternal-child-care-service/src/main/java/com/maternalcare/entities/ChildRecord.java
+deleted file mode 100644
+--- a/maternal-child-care-service/src/main/java/com/maternalcare/entities/ChildRecord.java	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
++++ /dev/null	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
+@@ -1,26 +0,0 @@
+-package com.maternalcare.entities;
+-
+-import jakarta.persistence.*;
+-import lombok.Data;
+-import lombok.NoArgsConstructor;
+-import java.time.LocalDate;
+-
+-@Entity
+-@Table(name = "child_record")
+-@Data
+-@NoArgsConstructor
+-public class ChildRecord {
+-
+-    @Id
+-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+-    private Integer cId;
+-
+-    private LocalDate dob;
+-
+-    @Column(nullable = false, length = 100)
+-    private String name;
+-
+-    @Column(nullable = false, length = 10)
+-    private String gender;
+-
+-}
+\ No newline at end of file
+Index: maternal-child-care-service/src/main/java/com/maternalcare/repositories/ViewsRepository.java
+===================================================================
+diff --git a/maternal-child-care-service/src/main/java/com/maternalcare/repositories/ViewsRepository.java b/maternal-child-care-service/src/main/java/com/maternalcare/repositories/ViewsRepository.java
+deleted file mode 100644
+--- a/maternal-child-care-service/src/main/java/com/maternalcare/repositories/ViewsRepository.java	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
++++ /dev/null	(revision 817fa9cda0c4b23a600e22c2dcd5d7e07182d3ae)
+@@ -1,10 +0,0 @@
+-package com.maternalcare.repositories;
+-
+-import com.maternalcare.entities.Views;
+-import org.springframework.data.jpa.repository.JpaRepository;
+-import org.springframework.stereotype.Repository;
+-
+-@Repository
+-public interface ViewsRepository extends JpaRepository<Views, Integer> {
+-
+-}
+\ No newline at end of file
