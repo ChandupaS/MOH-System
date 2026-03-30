@@ -1,0 +1,37 @@
+# Java/Maven
+target/
+*.class
+*.jar
+*.war
+*.ear
+.classpath
+.project
+.settings/
+bin/
+out/
+*.iml
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Node/npm
+node_modules/
+package-lock.json
+dist/
+
+# Environment
+.env
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+
+# Nested repo
+AIML\ project/AIML\ project/
