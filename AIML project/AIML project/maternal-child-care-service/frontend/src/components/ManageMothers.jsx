@@ -19,7 +19,7 @@ const ManageMothers = ({ navigate, division = DIVISION, midwifeId }) => {
         setLoading(true);
         setError('');
         try {
-            const res = await axios.get(`http://localhost:8080/api/midwife/${midwifeId}/mothers`);
+            const res = await axios.get(`http://localhost:8081/api/midwife/${midwifeId}/mothers`);
             if (res.data) {
                 setMothers(res.data);
             } else {
@@ -227,7 +227,7 @@ const EditMotherModal = ({ mother, division, midwifeId, onClose, onSaved }) => {
         setSaving(true);
         setError('');
         try {
-            await axios.put(`http://localhost:8080/api/midwife/${midwifeId}/mother/${mother.id}`, form);
+            await axios.put(`http://localhost:8081/api/midwife/${midwifeId}/mother/${mother.id}`, form);
             onSaved();
         } catch (err) {
             setError(err.response?.data || 'Failed to save changes.');

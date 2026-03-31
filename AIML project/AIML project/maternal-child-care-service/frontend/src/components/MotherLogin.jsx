@@ -12,7 +12,7 @@ const MotherLogin = () => {
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post('http://localhost:8080/api/auth/login', { email, password });
+            const res = await axios.post('http://localhost:8081/api/auth/login', { email, password });
             const { role, name, id } = res.data;
             if (role !== 'MOTHER') {
                 setError("Please use the Staff Portal to login.");
@@ -83,7 +83,7 @@ const MotherLogin = () => {
                                     type="button"
                                     className="dev-btn"
                                     style={{ background: 'var(--secondary)', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '4px', cursor: 'pointer', fontSize: '13px' }}
-                                    onClick={() => { localStorage.setItem('user', JSON.stringify({ id: 1, name: 'Test Mother', role: 'MOTHER' })); navigate('/mother'); }}
+                                    onClick={() => { localStorage.setItem('user', JSON.stringify({ id: 4, name: 'Sunitha Perera', role: 'MOTHER' })); navigate('/mother'); }}
                                 >
                                     Test Mother Session
                                 </button>

@@ -39,7 +39,7 @@ const MotherDashboard = () => {
 
     const fetchProfile = async () => {
         try {
-            const res = await axios.get(`http://localhost:8080/api/mother/${user.id}/profile`);
+            const res = await axios.get(`http://localhost:8081/api/mother/${user.id}/profile`);
             setProfile(res.data);
             setEditForm(res.data);
             setLoading(false);
@@ -63,7 +63,7 @@ const MotherDashboard = () => {
             };
             
             const res = await axios.put(
-                `http://localhost:8080/api/mother/${user.id}/profile`,
+                `http://localhost:8081/api/mother/${user.id}/profile`,
                 updateData
             );
             setProfile(res.data);

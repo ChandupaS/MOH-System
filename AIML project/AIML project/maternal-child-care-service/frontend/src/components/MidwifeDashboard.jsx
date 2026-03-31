@@ -22,7 +22,7 @@ const MidwifeDashboard = () => {
             navigate('/staff-login');
             return;
         }
-        axios.get(`http://localhost:8080/api/midwife/${user.id}/home-visits`)
+        axios.get(`http://localhost:8081/api/midwife/${user.id}/home-visits`)
             .then(res => {
                 setByStats({
                     totalMothers: res.data.today ? res.data.today.length + 12 : 15,
@@ -36,7 +36,7 @@ const MidwifeDashboard = () => {
             });
 
         // Fetch midwife profile to set the correct dynamic division
-        axios.get(`http://localhost:8080/api/midwife/${user.id}/profile`)
+        axios.get(`http://localhost:8081/api/midwife/${user.id}/profile`)
             .then(res => {
                 if (res.data && res.data.gnDivision) {
                     setDivision(res.data.gnDivision);
@@ -193,14 +193,14 @@ const MidwifeMotherVisits = ({ midwifeId }) => {
 
     useEffect(() => {
         if (!id) return;
-        axios.get(`http://localhost:8080/api/mother/home-visits/${id}`)
+        axios.get(`http://localhost:8081/api/mother/home-visits/${id}`)
             .then(res => setVisits(res.data))
             .catch(err => console.error(err));
     }, [id]);
 
     const handleStatusUpdate = async (visitId, status) => {
         try {
-            await axios.put(`http://localhost:8080/api/midwife/home-visit/${visitId}`, { status });
+            await axios.put(`http://localhost:8081/api/midwife/home-visit/${visitId}`, { status });
             setVisits(visits.map(v => v.id === visitId ? { ...v, status } : v));
         } catch (err) {
             alert('Failed to update visit status');
@@ -242,7 +242,7 @@ const MidwifeMotherVaccinations = ({ midwifeId }) => {
 
     const fetchVaccines = async () => {
         try {
-            const res = await axios.get(`http://localhost:8080/api/mother/vaccinations/${id}`);
+            const res = await axios.get(`http://localhost:8081/api/mother/vaccinations/${id}`);
             setVaccines(res.data);
             setLoading(false);
         } catch (err) { console.error(err); }
@@ -251,7 +251,7 @@ const MidwifeMotherVaccinations = ({ midwifeId }) => {
     const handleAdd = async (e) => {
         e.preventDefault();
         try {
-            await axios.post(`http://localhost:8080/api/midwife/${midwifeId}/mother/${id}/vaccinations`, formData);
+            await axios.post(`http://localhost:8081/api/midwife/${midwifeId}/mother/${id}/vaccinations`, formData);
             setShowForm(false);
             fetchVaccines();
         } catch (err) { alert('Failed to add vaccination record'); }
@@ -259,7 +259,7 @@ const MidwifeMotherVaccinations = ({ midwifeId }) => {
 
     const handleUpdate = async (vaccId, data) => {
         try {
-            await axios.put(`http://localhost:8080/api/midwife/vaccination/${vaccId}`, data);
+            await axios.put(`http://localhost:8081/api/midwife/vaccination/${vaccId}`, data);
             fetchVaccines();
         } catch (err) { alert('Failed to update record'); }
     };
@@ -267,7 +267,7 @@ const MidwifeMotherVaccinations = ({ midwifeId }) => {
     const handleDelete = async (vaccId) => {
         if (!window.confirm('Are you sure you want to delete this vaccination record?')) return;
         try {
-            await axios.delete(`http://localhost:8080/api/midwife/vaccination/${vaccId}`);
+            await axios.delete(`http://localhost:8081/api/midwife/vaccination/${vaccId}`);
             fetchVaccines();
         } catch (err) { alert('Failed to delete record'); }
     };
@@ -348,15 +348,15 @@ const MidwifeAnnouncements = ({ user }) => {
 
     useEffect(() => {
         if (!user?.id) return;
-        axios.get(`http://localhost:8080/api/midwife/announcements`)
+        axios.get(`http://localhost:8081/api/midwife/announcements`)
             .then(res => setAnnouncements(res.data)).catch(console.error);
-        axios.get(`http://localhost:8080/api/midwife/${user.id}/announcements/read-status`)
+        axios.get(`http://localhost:8081/api/midwife/${user.id}/announcements/read-status`)
             .then(res => setReadIds(res.data)).catch(console.error);
     }, [user]);
 
     const handleMarkRead = async (annId) => {
         try {
-            await axios.post(`http://localhost:8080/api/midwife/${user.id}/announcements/${annId}/read`);
+            await axios.post(`http://localhost:8081/api/midwife/${user.id}/announcements/${annId}/read`);
             setReadIds([...readIds, annId]);
         } catch (err) { console.error(err); }
     };

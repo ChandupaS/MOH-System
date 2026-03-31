@@ -13,7 +13,7 @@ const ChildDashboard = () => {
             navigate('/mother-login');
             return;
         }
-        axios.get(`http://localhost:8080/api/child/profile/${user.id}`)
+        axios.get(`http://localhost:8081/api/child/profile/${user.id}`)
             .then(res => setByChildProfile(res.data))
             .catch(err => console.error(err));
     }, [user, navigate]);

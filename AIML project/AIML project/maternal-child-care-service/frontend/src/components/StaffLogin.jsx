@@ -12,7 +12,7 @@ const StaffLogin = () => {
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post('http://localhost:8080/api/auth/login', { email, password });
+            const res = await axios.post('http://localhost:8081/api/auth/login', { email, password });
             const { role, name, id } = res.data;
             localStorage.setItem('user', JSON.stringify({ id, name, role }));
             if (role === 'DOCTOR') navigate('/doctor');

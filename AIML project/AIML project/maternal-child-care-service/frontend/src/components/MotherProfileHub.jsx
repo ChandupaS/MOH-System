@@ -20,7 +20,7 @@ const MotherProfileHub = ({ midwifeId }) => {
     const fetchProfile = async () => {
         try {
             setLoading(true);
-            const res = await axios.get(`http://localhost:8080/api/midwife/${midwifeId}/mother/${id}`);
+            const res = await axios.get(`http://localhost:8081/api/midwife/${midwifeId}/mother/${id}`);
             setProfile(res.data);
             setEditForm(res.data);
         } catch (err) {
@@ -49,7 +49,7 @@ const MotherProfileHub = ({ midwifeId }) => {
             };
 
             const res = await axios.put(
-                `http://localhost:8080/api/midwife/${midwifeId}/mother/${id}`,
+                `http://localhost:8081/api/midwife/${midwifeId}/mother/${id}`,
                 updateData
             );
             setProfile(res.data);
