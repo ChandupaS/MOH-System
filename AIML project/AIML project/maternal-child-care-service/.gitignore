@@ -1,0 +1,29 @@
+# Build and Dependencies
+target/
+node_modules/
+dist/
+build/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Compiled Java files
+*.class
+*.jar
+*.war
+
+# Package lock files that are auto-generated
+frontend/node_modules/
+frontend/package-lock.json
+
+# Log files
+*.log
+logs/
+
+# Maven
+.m2/
