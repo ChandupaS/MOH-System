@@ -16,6 +16,8 @@ out/
 
 # Node/npm
 node_modules/
+dist/
+.vite/
 
 # Environment
 .env

@@ -16,6 +16,9 @@ public class MotherController {
     @Autowired
     private MotherProfileRepository motherProfileRepository;
 
+    @Autowired
+    private com.maternalcare.repositories.SymptomEntryRepository symptomEntryRepository;
+
     @GetMapping("/{motherId}/profile")
     public ResponseEntity<?> getMotherProfile(@PathVariable Long motherId) {
         return motherProfileRepository.findByUserId(motherId)
@@ -27,7 +30,6 @@ public class MotherController {
     public ResponseEntity<?> updateMotherProfile(@PathVariable Long motherId, @RequestBody Map<String, String> data) {
         return motherProfileRepository.findByUserId(motherId)
             .map(profile -> {
-                // Allow mother to update their own information
                 if (data.get("healthConditions") != null)
                     profile.setHealthConditions(data.get("healthConditions"));
                 if (data.get("contactNumber") != null)
@@ -45,5 +47,33 @@ public class MotherController {
                 return ResponseEntity.ok(saved);
             })
             .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/symptoms/{motherId}")
+    public ResponseEntity<?> getMotherSymptoms(@PathVariable Long motherId) {
+        return motherProfileRepository.findById(motherId)
+            .map(mother -> ResponseEntity.ok(symptomEntryRepository.findByMotherIdOrderBySubmittedAtDesc(mother.getId())))
+            .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/symptoms")
+    public ResponseEntity<?> postSymptom(@RequestBody com.maternalcare.entities.SymptomEntry entry) {
+        entry.setSubmittedAt(java.time.LocalDateTime.now());
+        return ResponseEntity.ok(symptomEntryRepository.save(entry));
+    }
+    @Autowired
+    private com.maternalcare.repositories.HomeVisitRepository homeVisitRepository;
+
+    @Autowired
+    private com.maternalcare.repositories.VaccinationScheduleRepository vaccinationScheduleRepository;
+
+    @GetMapping("/home-visits/{motherId}")
+    public ResponseEntity<?> getMotherVisits(@PathVariable Long motherId) {
+        return ResponseEntity.ok(homeVisitRepository.findByMotherIdOrderByScheduledDateAsc(motherId));
+    }
+
+    @GetMapping("/vaccinations/{motherId}")
+    public ResponseEntity<?> getMotherVaccinations(@PathVariable Long motherId) {
+        return ResponseEntity.ok(vaccinationScheduleRepository.findByMotherIdOrderByScheduledDateAsc(motherId));
     }
 }

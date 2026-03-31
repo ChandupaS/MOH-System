@@ -144,7 +144,7 @@ const ChildOverview = ({ profile, user, navigate }) => {
             </div>
 
             <div style={{ marginTop: '8px' }}>
-                <button onClick={() => navigate('/mother')} className="btn-clinical-outline" style={{
+                <button onClick={() => window.location.href = '/mother'} className="btn-clinical-outline" style={{
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '6px',

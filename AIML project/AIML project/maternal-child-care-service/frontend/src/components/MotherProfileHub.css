@@ -1,169 +1,118 @@
-/* ==========================================
-   MOTHER PROFILE HUB
-   ========================================== */
+/* Mother Profile Hub - Modern Medical Dashboard Style */
 .hub-container {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding-bottom: 40px;
-}
-
-.hub-loader {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 100px 20px;
-    color: #7a9aaa;
-    font-weight: 500;
-}
-
-.hub-spinner {
-    width: 40px;
-    height: 40px;
-    border: 3px solid #d0e8f2;
-    border-top-color: #0077b6;
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    margin-bottom: 16px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .hub-header-actions {
-    margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
 }
 
-.hub-back {
-    display: inline-flex;
-    align-items: center;
-    font-weight: 600;
-    color: #4a6a7d;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    font-size: 14px;
-    padding: 8px 16px;
-    border-radius: 8px;
-    transition: background 0.2s, color 0.2s;
-}
-
-.hub-back:hover {
-    background: #e8f4f9;
-    color: #0077b6;
-}
-
-/* Overview Card */
 .hub-overview {
-    display: flex;
-    align-items: center;
-    gap: 24px;
-    padding: 32px;
-    margin-bottom: 32px;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 2rem;
 }
 
 .hub-avatar {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #0077b6, #00b4d8);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 28px;
-    font-weight: 700;
-    flex-shrink: 0;
-    box-shadow: 0 8px 24px rgba(0, 119, 182, 0.2);
-}
-
-.hub-info {
-    flex: 1;
+  width: 96px;
+  height: 96px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: white;
+  font-weight: 700;
+  box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.3);
 }
 
 .hub-name {
-    font-size: 24px;
-    font-weight: 700;
-    color: #0d1b2a;
-    margin: 0 0 16px 0;
+  font-size: 1.75rem;
+  margin-bottom: 1.5rem;
+  color: var(--secondary);
 }
 
 .hub-meta-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 20px;
-}
-
-.hub-meta-item {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1.5rem;
 }
 
 .hub-meta-label {
-    font-size: 12px;
-    color: #7a9aaa;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+  display: block;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 600;
+  letter-spacing: 0.025em;
+  margin-bottom: 0.25rem;
 }
 
 .hub-meta-value {
-    font-size: 15px;
-    color: #1e3a4f;
-    font-weight: 600;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--secondary);
 }
 
-.hub-meta-value .badge {
-    font-size: 12px;
-    padding: 4px 10px;
-}
-
-/* Nav Grid */
-.hub-nav-title {
-    font-size: 18px;
-    font-weight: 700;
-    color: #0d1b2a;
-    margin-bottom: 20px;
-}
-
+/* Section Cards */
 .hub-nav-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 1.5rem;
 }
 
 .hub-nav-card {
-    background: #ffffff;
-    border: 1.5px solid #e8f4f9;
-    border-radius: 16px;
-    padding: 24px;
-    cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+  background: var(--surface);
+  padding: 2rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-sm);
 }
 
 .hub-nav-card:hover {
-    border-color: #00b4d8;
-    transform: translateY(-3px);
-    box-shadow: 0 12px 24px rgba(0, 180, 216, 0.1);
+  transform: translateY(-4px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  border-color: var(--primary);
 }
 
 .hub-nav-card h4 {
-    margin: 0 0 8px 0;
-    font-size: 16px;
-    font-weight: 700;
-    color: #0077b6;
+  color: var(--primary);
+  font-size: 1.25rem;
+  margin-bottom: 0.75rem;
 }
 
 .hub-nav-card p {
-    margin: 0;
-    font-size: 14px;
-    color: #4a6a7d;
-    line-height: 1.5;
+  color: var(--text-muted);
+  font-size: 0.95rem;
 }
 
-@media (max-width: 650px) {
-    .hub-overview {
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 24px;
-    }
+/* Section Titles */
+.hub-nav-title {
+  font-size: 1.25rem;
+  margin: 3rem 0 1.5rem;
+  position: relative;
+  padding-left: 1rem;
+}
+
+.hub-nav-title::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.25rem;
+  bottom: 0.25rem;
+  width: 4px;
+  background: var(--primary);
+  border-radius: 2px;
 }

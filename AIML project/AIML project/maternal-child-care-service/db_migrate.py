@@ -231,17 +231,29 @@ def main():
 
     print()
 
-    # ── 7. SEED — create default doctor account ──────────────────────────────
-    print("Seeding default doctor account...")
+    # ── 7. SEED — create default doctor and midwife accounts ──────────────────────
+    print("Seeding default doctor and midwife accounts...")
     run(conn, """
-        INSERT INTO users (name, email, password, role)
-        VALUES ('Dr. Admin', 'doctor@suwa.lk', 'doctor123', 'DOCTOR')
-        ON CONFLICT (email) DO NOTHING;
-    """, "Seed doctor user")
+        INSERT INTO users (id, name, email, password, role)
+        VALUES 
+            (1, 'Dr. Admin', 'doctor@suwa.lk', 'doctor123', 'DOCTOR'),
+            (2, 'Midwife Malabe', 'midwife@suwasewana.lk', 'Midwife@1234', 'MIDWIFE'),
+            (3, 'Midwife Kaduwela', 'midwife2@suwasewana.lk', 'Midwife@1234', 'MIDWIFE')
+        ON CONFLICT (id) DO UPDATE SET email=EXCLUDED.email;
+    """, "Seed users")
+
+    run(conn, """
+        INSERT INTO midwife_profiles (user_id, gn_division)
+        VALUES 
+            (2, 'Malabe East'),
+            (3, 'Kaduwela')
+        ON CONFLICT (user_id) DO NOTHING;
+    """, "Seed midwife_profiles")
+
+    # Reset sequences so new inserts don't conflict
+    run(conn, "SELECT setval('users_id_seq', (SELECT MAX(id) FROM users));", "Reset users sequence")
 
     print()
-
-    # ── 8. VERIFY ALL TABLES CREATED ────────────────────────────────────────
     cur.execute("""
         SELECT tablename FROM pg_tables
         WHERE schemaname = 'public'

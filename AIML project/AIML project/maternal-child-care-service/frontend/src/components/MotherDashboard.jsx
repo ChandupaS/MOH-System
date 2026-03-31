@@ -5,6 +5,19 @@ import SidebarLayout from './SidebarLayout';
 import SymptomTracker from './SymptomTracker';
 import PregnancyDetails from './PregnancyDetails';
 
+const PREGNANCY_MILESTONES = [
+    { week: 4, label: 'Confirmation', detail: 'HCG levels rising. Blood pregnancy test confirmed.' },
+    { week: 8, label: 'First Dating Scan', detail: 'Heartbeat visible. Checking for viable pregnancy.' },
+    { week: 12, label: 'NT Scan & Labs', detail: 'End of 1st Trimester. Chromosomal screening.' },
+    { week: 16, label: 'Weight & BP Check', detail: 'Monitoring for early signs of hypertension.' },
+    { week: 20, label: 'Anatomy Scan', detail: 'Full fetal development check. Gender identification.' },
+    { week: 24, label: 'Glucose Test', detail: 'Screening for Gestational Diabetes.' },
+    { week: 28, label: '3rd Trimester Begins', detail: 'Fetal growth monitoring. Daily kick counts.' },
+    { week: 32, label: 'Growth Ultrasound', detail: 'Checking baby position and fluid levels.' },
+    { week: 36, label: 'Group B Strep Test', detail: 'Final screening before labor prep.' },
+    { week: 40, label: 'EDD Delivery', detail: 'Full term development. Labor imminent.' }
+];
+
 const MotherDashboard = () => {
     const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
     const [profile, setProfile] = useState(null);
@@ -68,8 +81,8 @@ const MotherDashboard = () => {
         return (
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
                 <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: '24px', marginBottom: '10px' }}>⏳</div>
-                    <p>Loading your profile...</p>
+                    <div className="mm-spinner" style={{ margin: '0 auto 15px' }}></div>
+                    <p style={{ color: 'var(--text-muted)' }}>Retrieving clinical records...</p>
                 </div>
             </div>
         );
@@ -79,9 +92,7 @@ const MotherDashboard = () => {
         { label: 'Dashboard', path: '/mother', exact: true },
         { label: 'Pregnancy Details', path: '/mother/pregnancy' },
         { label: 'Symptom Tracker', path: '/mother/symptoms' },
-        { label: 'My Child', path: '/mother/child' },
         { label: 'Vaccination Records', path: '/mother/vaccinations' },
-        { label: 'Announcements', path: '/mother/announcements' },
     ];
 
     return (
@@ -89,34 +100,135 @@ const MotherDashboard = () => {
             <Routes>
                 <Route path="/" element={
                     <div className="dashboard-panel">
-                        <div className="dashboard-header">
-                            <h2>Welcome, {user?.name}! 👋</h2>
-                            <p>Manage your maternal health and child care records</p>
+                        <div className="dashboard-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <div>
+                                <h2 style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="var(--primary)" strokeWidth="2" width="28" height="28">
+                                        <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                                    </svg>
+                                    Welcome, {user?.name}!
+                                </h2>
+                                <p>Manage your maternal health and child care records</p>
+                            </div>
+                            <button 
+                                className="btn-clinical" 
+                                onClick={() => window.location.href = '/child'}
+                                style={{ background: 'var(--accent)', border: 'none', display: 'flex', alignItems: 'center', gap: '8px' }}
+                            >
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="18" height="18">
+                                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                                </svg>
+                                Switch to Child Dashboard
+                            </button>
                         </div>
 
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginTop: '30px' }}>
-                            <div className="stat-card" style={{ cursor: 'pointer' }} onClick={() => navigate('/mother/pregnancy')}>
-                                <div style={{ fontSize: '40px', marginBottom: '10px' }}>🤰</div>
-                                <h3>Pregnancy Details</h3>
-                                <p>View and update pregnancy information</p>
-                            </div>
+                        {/* Patient Journey Section */}
+                        {profile?.edd && profile?.lmp ? (() => {
+                            const lmpDate = new Date(profile.lmp);
+                            const today = new Date();
+                            const weeksAlong = Math.floor((today - lmpDate) / (1000 * 60 * 60 * 24 * 7));
+                            const remainingWeeks = Math.max(0, 40 - weeksAlong);
+                            const trimester = weeksAlong <= 12 ? 1 : (weeksAlong <= 27 ? 2 : 3);
+                            
+                            const weeklyInsights = {
+                                12: "Your baby is now the size of a lime! Their facial features are beginning to look more human.",
+                                20: "You're at the halfway mark! Your baby can now swallow and is becoming more active each day.",
+                                24: "Baby's lungs are developing surfactant, which will help them breathe after birth.",
+                                28: "Welcome to the 3rd trimester! Your baby's eyes can now open and close.",
+                                36: "Baby is head-down now, getting ready for the big day. You might feel more pressure as they drop.",
+                                40: "Delivery week! Your baby is fully developed and ready to meet you."
+                            };
+                            
+                            const currentInsight = Object.entries(weeklyInsights).reverse().find(([w]) => weeksAlong >= w)?.[1] || "Your baby is developing beautifully. Remember to stay hydrated and take your prenatal vitamins.";
 
-                            <div className="stat-card" style={{ cursor: 'pointer' }} onClick={() => navigate('/mother/symptoms')}>
-                                <div style={{ fontSize: '40px', marginBottom: '10px' }}>📊</div>
-                                <h3>Symptom Tracker</h3>
-                                <p>Log and track your health symptoms</p>
-                            </div>
+                            return (
+                                <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '20px', marginTop: '30px' }}>
+                                    <div className="dashboard-panel" style={{ margin: 0, borderTop: '4px solid var(--primary)' }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <h3>Your Pregnancy Journey</h3>
+                                            <span className="badge badge-primary">Trimester {trimester}</span>
+                                        </div>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '20px', margin: '20px 0' }}>
+                                            <div style={{ background: 'var(--primary-light)', padding: '20px', borderRadius: '50%', width: '80px', height: '80px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', fontWeight: '800', color: 'var(--primary)', border: '2px solid var(--primary)' }}>
+                                                W{weeksAlong}
+                                            </div>
+                                            <div>
+                                                <h4 style={{ margin: 0 }}>You are in Week {weeksAlong}</h4>
+                                                <p style={{ margin: 0, color: 'var(--text-muted)' }}>{remainingWeeks} weeks until your due date</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div style={{ background: '#f8fafc', padding: '15px', borderRadius: '12px', borderLeft: '4px solid var(--accent)' }}>
+                                            <h5 style={{ marginBottom: '8px', color: 'var(--accent)' }}>✨ This Week's Insight</h5>
+                                            <p style={{ margin: 0, fontSize: '14px', lineHeight: '1.6' }}>{currentInsight}</p>
+                                        </div>
 
-                            <div className="stat-card" style={{ cursor: 'pointer' }} onClick={() => navigate('/mother/child')}>
-                                <div style={{ fontSize: '40px', marginBottom: '10px' }}>👶</div>
-                                <h3>My Child</h3>
-                                <p>View your child's health records</p>
-                            </div>
+                                        <div style={{ marginTop: '25px' }}>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '8px', fontWeight: '600' }}>
+                                                <span>Trimester Progress</span>
+                                                <span>{Math.min(100, Math.round((weeksAlong / 40) * 100))}%</span>
+                                            </div>
+                                            <div style={{ height: '10px', background: '#e2e8f0', borderRadius: '5px', overflow: 'hidden' }}>
+                                                <div style={{ width: `${(weeksAlong / 40) * 100}%`, height: '100%', background: 'linear-gradient(90deg, var(--primary), var(--accent))' }}></div>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                            <div className="stat-card" style={{ cursor: 'pointer' }} onClick={() => navigate('/mother/vaccinations')}>
-                                <div style={{ fontSize: '40px', marginBottom: '10px' }}>💉</div>
-                                <h3>Vaccination Records</h3>
-                                <p>Track immunization schedules</p>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                                        <div className="dashboard-panel" style={{ margin: 0 }}>
+                                            <h4 style={{ fontSize: '16px' }}>Upcoming Milestones</h4>
+                                            <div style={{ marginTop: '15px' }}>
+                                                {PREGNANCY_MILESTONES.filter(m => m.week >= weeksAlong).slice(0, 2).map(m => (
+                                                    <div key={m.week} style={{ padding: '12px', borderBottom: '1px solid #f1f5f9' }}>
+                                                        <span style={{ fontSize: '10px', fontWeight: '800', color: 'var(--primary)' }}>WEEK {m.week}</span>
+                                                        <h5 style={{ margin: '2px 0', fontSize: '14px' }}>{m.label}</h5>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                        <div className="dashboard-panel" style={{ margin: 0, background: 'var(--secondary)', color: 'white' }}>
+                                            <h4 style={{ color: 'white', fontSize: '14px' }}>Due Date</h4>
+                                            <h2 style={{ color: 'white', fontSize: '24px', margin: '10px 0' }}>{new Date(profile.edd).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</h2>
+                                            <p style={{ margin: 0, fontSize: '12px', opacity: 0.8 }}>Hand-coded by your midwife</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        })() : (
+                            <div className="dashboard-panel" style={{ marginTop: '30px', textAlign: 'center', padding: '60px' }}>
+                                <div style={{ marginBottom: '20px', color: 'var(--primary)', opacity: 0.5 }}>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" width="80" height="80">
+                                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                    </svg>
+                                </div>
+                                <h3>Welcome to your Journey</h3>
+                                <p style={{ color: 'var(--text-muted)', maxWidth: '500px', margin: '0 auto' }}>Your midwife hasn't added your clinical pregnancy details yet. Once they record your last period date, you'll see your week-by-week progress here!</p>
+                            </div>
+                        )}
+
+                        {/* Announcements Card (In-Dashboard) */}
+                        <div className="dashboard-panel" style={{ marginTop: '30px', borderLeft: '4px solid var(--warning)' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+                                <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="var(--warning)" strokeWidth="2" width="20" height="20">
+                                        <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/>
+                                    </svg>
+                                    Latest Health Announcements
+                                </h3>
+                            </div>
+                            <div className="list-item-clinical">
+                                <div className="list-item-clinical-text">
+                                    <h5 style={{ color: 'var(--secondary)' }}>National Vaccination Campaign</h5>
+                                    <p style={{ fontSize: '13px' }}>The MOH has announced a special vaccination drive for all children under 5 next Saturday.</p>
+                                </div>
+                                <span className="badge" style={{ background: 'var(--warning)', color: 'white' }}>New</span>
+                            </div>
+                            <div className="list-item-clinical" style={{ border: 'none' }}>
+                                <div className="list-item-clinical-text">
+                                    <h5 style={{ color: 'var(--secondary)' }}>Dengue Prevention Notice</h5>
+                                    <p style={{ fontSize: '13px' }}>Please ensure all water containers are cleaned to prevent mosquito breeding in the Malabe area.</p>
+                                </div>
+                                <span className="badge badge-muted">2 Days Ago</span>
                             </div>
                         </div>
 
@@ -124,15 +236,16 @@ const MotherDashboard = () => {
                             <div className="dashboard-panel" style={{ marginTop: '30px' }}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                                     <h3>Your Profile Information</h3>
-                                    {!editing && (
                                         <button 
                                             className="btn-clinical"
                                             onClick={() => setEditing(true)}
-                                            style={{ padding: '8px 16px', fontSize: '14px' }}
+                                            style={{ padding: '8px 16px', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '6px' }}
                                         >
-                                            ✏️ Edit Profile
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14">
+                                                <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7M18.5 2.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                            </svg>
+                                            Edit Profile
                                         </button>
-                                    )}
                                 </div>
 
                                 {message && (
@@ -229,7 +342,7 @@ const MotherDashboard = () => {
                                                 disabled={saving}
                                                 style={{ padding: '10px 20px' }}
                                             >
-                                                {saving ? '💾 Saving...' : '💾 Save Changes'}
+                                                {saving ? 'Saving...' : 'Save Changes'}
                                             </button>
                                             <button 
                                                 className="btn-clinical-outline"
@@ -240,7 +353,7 @@ const MotherDashboard = () => {
                                                 disabled={saving}
                                                 style={{ padding: '10px 20px' }}
                                             >
-                                                ✕ Cancel
+                                                Cancel
                                             </button>
                                         </div>
                                     </div>
@@ -288,24 +401,12 @@ const MotherDashboard = () => {
                         )}
                     </div>
                 } />
-                <Route path="/pregnancy" element={<PregnancyDetails />} />
+                <Route path="/pregnancy" element={<PregnancyDetails motherUserId={user.id} readOnly={true} />} />
                 <Route path="/symptoms" element={<SymptomTracker />} />
-                <Route path="/child" element={
-                    <div className="dashboard-panel">
-                        <h2>My Child</h2>
-                        <p>Child health information will be displayed here.</p>
-                    </div>
-                } />
                 <Route path="/vaccinations" element={
                     <div className="dashboard-panel">
                         <h2>Vaccination Records</h2>
                         <p>Your vaccination schedule and records will be displayed here.</p>
-                    </div>
-                } />
-                <Route path="/announcements" element={
-                    <div className="dashboard-panel">
-                        <h2>Announcements</h2>
-                        <p>Health announcements and updates from doctors will be displayed here.</p>
                     </div>
                 } />
             </Routes>

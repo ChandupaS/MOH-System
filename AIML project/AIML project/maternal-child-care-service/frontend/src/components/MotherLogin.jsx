@@ -76,46 +76,20 @@ const MotherLogin = () => {
                             <button type="button" className="forgot-password">Forgot password?</button>
                         </form>
 
-                        <div className="dev-credentials">
-                            <p>Quick Start (Dev Bypass):</p>
+                        <div className="dev-credentials" style={{ marginTop: '30px' }}>
+                            <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '8px' }}>Developer Access:</p>
                             <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', flexWrap: 'wrap' }}>
                                 <button
                                     type="button"
                                     className="dev-btn"
-                                    title="mother@suwasewana.lk / Mother@1234"
-                                    onClick={() => { localStorage.setItem('user', JSON.stringify({ id: 4, name: 'Sunitha Perera', role: 'MOTHER' })); navigate('/mother'); }}
+                                    style={{ background: 'var(--secondary)', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '4px', cursor: 'pointer', fontSize: '13px' }}
+                                    onClick={() => { localStorage.setItem('user', JSON.stringify({ id: 1, name: 'Test Mother', role: 'MOTHER' })); navigate('/mother'); }}
                                 >
-                                    Mother (Sunitha)
-                                </button>
-                                <button
-                                    type="button"
-                                    className="dev-btn"
-                                    title="mother2@suwasewana.lk / Mother@1234"
-                                    onClick={() => { localStorage.setItem('user', JSON.stringify({ id: 5, name: 'Kamala Silva', role: 'MOTHER' })); navigate('/mother'); }}
-                                >
-                                    Mother (Kamala)
+                                    Test Mother Session
                                 </button>
                             </div>
                         </div>
 
-                        <div style={{ marginTop: '20px', textAlign: 'center', borderTop: '1px solid #e0e0e0', paddingTop: '20px' }}>
-                            <p style={{ fontSize: '14px', color: '#666' }}>New to our platform?</p>
-                            <button 
-                                type="button" 
-                                onClick={() => navigate('/register-mother')}
-                                style={{ 
-                                    background: 'none', 
-                                    border: 'none', 
-                                    color: '#2196F3', 
-                                    textDecoration: 'underline', 
-                                    cursor: 'pointer',
-                                    fontSize: '14px',
-                                    fontWeight: 'bold'
-                                }}
-                            >
-                                Register here
-                            </button>
-                        </div>
                     </div>
                 </div>
             </div>

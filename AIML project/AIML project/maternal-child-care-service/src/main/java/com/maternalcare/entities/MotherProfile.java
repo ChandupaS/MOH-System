@@ -68,6 +68,21 @@ public class MotherProfile {
     private String weight;
     private String allergies;
 
+    @Column(name = "blood_pressure")
+    private String bloodPressure;
+
+    @Column(name = "fundal_height")
+    private String fundalHeight;
+
+    @Column(name = "fetal_heart_rate")
+    private String fetalHeartRate;
+
+    @Column(columnDefinition = "TEXT")
+    private String complications;
+
+    @Column(name = "midwife_notes", columnDefinition = "TEXT")
+    private String midwifeNotes;
+
     @Column(name = "registration_date")
     private LocalDate registrationDate = LocalDate.now();
 }

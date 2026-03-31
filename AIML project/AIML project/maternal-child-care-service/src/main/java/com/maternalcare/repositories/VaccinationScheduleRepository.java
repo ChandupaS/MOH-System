@@ -5,5 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface VaccinationScheduleRepository extends JpaRepository<VaccinationSchedule, Long> {
-    List<VaccinationSchedule> findByUserIdOrderByScheduledDateAsc(Long userId);
+    List<VaccinationSchedule> findByMotherIdOrderByScheduledDateAsc(Long motherId);
+    List<VaccinationSchedule> findByTypeAndMotherIdOrderByScheduledDateAsc(String type, Long motherId);
 }

@@ -59,28 +59,31 @@ const ManageMothers = ({ navigate, division = DIVISION, midwifeId }) => {
                 </button>
             </div>
 
-            {/* Search Bar */}
-            <div className="mm-search-bar-wrapper">
-                <div className="mm-search-bar">
-                    <svg className="mm-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                    </svg>
-                    <input
-                        type="text"
-                        className="mm-search-input"
-                        placeholder="Search by mother ID or name..."
-                        value={searchQuery}
-                        onChange={e => setSearchQuery(e.target.value)}
-                    />
+            {/* ID-focused Search Card */}
+            <div className="dashboard-panel" style={{ padding: '2rem', marginBottom: '2.5rem', background: 'var(--primary-light)', border: '1px solid var(--primary)' }}>
+                <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'flex-end' }}>
+                    <div className="clinical-form-group" style={{ flex: 1, marginBottom: 0 }}>
+                        <label style={{ color: 'var(--primary)', fontWeight: '700' }}>Search Mother Database</label>
+                        <input
+                            type="text"
+                            className="clinical-input-field"
+                            placeholder="Enter Mother ID or Name (e.g. SYS-1 or Sunitha)"
+                            value={searchQuery}
+                            onChange={e => setSearchQuery(e.target.value)}
+                            style={{ background: 'white', border: '2px solid var(--primary)' }}
+                        />
+                    </div>
                     {searchQuery && (
-                        <button className="mm-search-clear" onClick={() => setSearchQuery('')}>
-                            &#x2715;
+                        <button className="btn-clinical-outline" onClick={() => setSearchQuery('')} style={{ height: '45px', border: '2px solid var(--primary)' }}>
+                            Clear Search
                         </button>
                     )}
+                    <div style={{ minWidth: '120px', textAlign: 'right' }}>
+                        <span style={{ fontSize: '0.8rem', color: 'var(--primary)', fontWeight: '600' }}>
+                           Found: {filtered.length} {filtered.length === 1 ? 'Record' : 'Records'}
+                        </span>
+                    </div>
                 </div>
-                <span className="mm-result-count">
-                    {filtered.length} {filtered.length === 1 ? 'record' : 'records'}
-                </span>
             </div>
 
             {/* Error */}
@@ -103,14 +106,6 @@ const ManageMothers = ({ navigate, division = DIVISION, midwifeId }) => {
                     </div>
                 ) : filtered.length === 0 ? (
                     <div className="mm-state-box">
-                        <div className="mm-empty-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="40" height="40">
-                                <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
-                                <circle cx="9" cy="7" r="4"/>
-                                <path d="M23 21v-2a4 4 0 00-3-3.87"/>
-                                <path d="M16 3.13a4 4 0 010 7.75"/>
-                            </svg>
-                        </div>
                         <p className="mm-empty-title">
                             {searchQuery ? 'No matching mothers found.' : 'No mothers registered in your division yet.'}
                         </p>

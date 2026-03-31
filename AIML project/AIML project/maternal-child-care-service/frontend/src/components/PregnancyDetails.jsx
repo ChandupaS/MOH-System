@@ -3,13 +3,26 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './PregnancyDetails.css';
 
+const PREGNANCY_MILESTONES = [
+    { week: 4, label: 'Confirmation', detail: 'HCG levels rising. Blood pregnancy test confirmed.' },
+    { week: 8, label: 'First Dating Scan', detail: 'Heartbeat visible. Checking for viable pregnancy.' },
+    { week: 12, label: 'NT Scan & Labs', detail: 'End of 1st Trimester. Chromosomal screening.' },
+    { week: 16, label: 'Weight & BP Check', detail: 'Monitoring for early signs of hypertension.' },
+    { week: 20, label: 'Anatomy Scan', detail: 'Full fetal development check. Gender identification.' },
+    { week: 24, label: 'Glucose Test', detail: 'Screening for Gestational Diabetes.' },
+    { week: 28, label: '3rd Trimester Begins', detail: 'Fetal growth monitoring. Daily kick counts.' },
+    { week: 32, label: 'Growth Ultrasound', detail: 'Checking baby position and fluid levels.' },
+    { week: 36, label: 'Group B Strep Test', detail: 'Final screening before labor prep.' },
+    { week: 40, label: 'EDD Delivery', detail: 'Full term development. Labor imminent.' }
+];
+
 const MEDICAL_HISTORY_OPTS = [
     'Hypertension', 'Diabetes', 'Cardiac diseases', 'Renal diseases',
     'Hepatic diseases', 'Psychiatric illnesses', 'Epilepsy', 'Malignancies',
     'Haematological diseases', 'Tuberculosis', 'Thyroid diseases', 'Bronchial asthma'
 ];
 
-const PregnancyDetails = ({ midwifeId }) => {
+const PregnancyDetails = ({ midwifeId, motherUserId, readOnly }) => {
     const { id } = useParams();
     const navigate = useNavigate();
     
@@ -34,7 +47,12 @@ const PregnancyDetails = ({ midwifeId }) => {
     useEffect(() => {
         const fetchDetails = async () => {
             try {
-                const res = await axios.get(`http://localhost:8080/api/midwife/${midwifeId}/mother/${id}`);
+                let res;
+                if (midwifeId) {
+                    res = await axios.get(`http://localhost:8080/api/midwife/${midwifeId}/mother/${id}`);
+                } else {
+                    res = await axios.get(`http://localhost:8080/api/mother/${motherUserId}/profile`);
+                }
                 const data = res.data;
                 setProfile(data);
                 setUser(data.user);
@@ -152,7 +170,7 @@ const PregnancyDetails = ({ midwifeId }) => {
             {/* Header Section Matches Mockup Exactly */}
             <div className="pd-header-area">
                 <div className="pd-header-left">
-                    <button className="pd-back-arrow" onClick={() => navigate(`/midwife/mothers/profile/${id}`)}>
+                    <button className="pd-back-arrow" onClick={() => readOnly ? navigate('/mother') : navigate(`/midwife/mothers/profile/${id}`)}>
                         <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
                     </button>
                     <h1 className="pd-title">Pregnancy Details</h1>
@@ -163,85 +181,119 @@ const PregnancyDetails = ({ midwifeId }) => {
             </div>
 
             <div className="pd-controls-row">
-                {!isEditing ? (
-                    <button className="pd-btn-edit" onClick={() => setIsEditing(true)}>Edit</button>
-                ) : (
-                    <>
-                        <button className="pd-btn-cancel" onClick={() => setIsEditing(false)}>Cancel</button>
-                        <button className="pd-btn-save" onClick={handleSave} disabled={saving}>{saving ? 'Saving...' : 'Save'}</button>
-                    </>
+                {!readOnly && (
+                    !isEditing ? (
+                        <div style={{ display: 'flex', gap: '12px' }}>
+                            {form.lmp && form.edd && (
+                                <button className="pd-btn-tracker" onClick={() => document.getElementById('pregnancy-tracker')?.scrollIntoView({ behavior: 'smooth' })}>
+                                    View Pregnancy Tracker
+                                </button>
+                            )}
+                            <button className="pd-btn-edit" onClick={() => setIsEditing(true)}>Edit Clinical Record</button>
+                        </div>
+                    ) : (
+                        <>
+                            <button className="pd-btn-cancel" onClick={() => setIsEditing(false)}>Cancel</button>
+                            <button className="pd-btn-save" onClick={handleSave} disabled={saving}>{saving ? 'Saving...' : 'Save Record'}</button>
+                        </>
+                    )
                 )}
+            </div>
+
+            {/* Patient Identity Header (Fixed) */}
+            <div className="pd-identity-header">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                    <div className="avatar-placeholder">{form.firstName?.[0]}{form.lastName?.[0]}</div>
+                    <div>
+                        <h2 style={{ margin: 0, fontSize: '24px' }}>{form.firstName} {form.lastName}</h2>
+                        <div style={{ display: 'flex', gap: '15px', marginTop: '5px', fontSize: '13px', color: '#64748b' }}>
+                            <span><strong>NIC:</strong> {form.nic || 'N/A'}</span>
+                            <span><strong>DOB:</strong> {form.dob || 'N/A'}</span>
+                            <span><strong>Blood Group:</strong> {form.bloodGroup || 'Not Set'}</span>
+                            <span className="badge badge-primary">Division: {form.phmArea || 'Malabe'}</span>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             {/* Layout matches image exactly - split left (form) and right (Medical History) visually in CSS */}
             <div className="pd-main-layout">
                 <div className="pd-left-column">
                     
-                    {/* patient details */}
+                    {/* Pregnancy Overview Section */}
                     <div className="pd-section">
-                        <h2 className="pd-section-title">Patient Details</h2>
-                        <div className="pd-grid-3">
-                            <InputField label="First Name" value={form.firstName} field="firstName" isEditing={isEditing} onChange={handleFieldChange} placeholder="Name" />
-                            <InputField label="Last Name" value={form.lastName} field="lastName" isEditing={isEditing} onChange={handleFieldChange} placeholder="Name" />
-                            <InputField label="ID" value={form.nic} field="nic" isEditing={isEditing} onChange={handleFieldChange} placeholder="Nic" />
-                        </div>
+                        <h2 className="pd-section-title">Pregnancy Overview</h2>
                         <div className="pd-grid-2">
-                            <InputField label="Email" value={form.email} field="email" isEditing={isEditing} onChange={handleFieldChange} placeholder="Email" type="email" />
-                            <InputField label="Contact Number" value={form.contactNumber} field="contactNumber" isEditing={isEditing} onChange={handleFieldChange} placeholder="Phone Number" />
-                        </div>
-                        <div className="pd-grid-2" style={{ gridTemplateColumns: '1fr 2fr' }}>
-                            <InputField label="DOB" value={form.dob} field="dob" isEditing={isEditing} onChange={handleFieldChange} placeholder="dd/mm/yyyy" type="date" />
-                            <InputField label="Address" value={form.address} field="address" isEditing={isEditing} onChange={handleFieldChange} placeholder="Address" />
-                        </div>
-                        <div className="pd-grid-1-narrow">
-                            <InputField label="PHM Area" value={form.phmArea} field="phmArea" isEditing={isEditing} onChange={handleFieldChange} placeholder="Name" />
-                            <InputField label="MOH Area" value={form.mohArea} field="mohArea" isEditing={isEditing} onChange={handleFieldChange} placeholder="Name" />
-                        </div>
-                    </div>
-
-                    {/* father details */}
-                    <div className="pd-section">
-                        <h2 className="pd-section-title">Father's Details</h2>
-                        <div className="pd-grid-3">
-                            <InputField label="First Name" value={form.fatherFirstName} field="fatherFirstName" isEditing={isEditing} onChange={handleFieldChange} placeholder="Name" />
-                            <InputField label="Last Name" value={form.fatherLastName} field="fatherLastName" isEditing={isEditing} onChange={handleFieldChange} placeholder="Name" />
-                            <InputField label="ID" value={form.fatherNic} field="fatherNic" isEditing={isEditing} onChange={handleFieldChange} placeholder="Nic" />
-                        </div>
-                    </div>
-
-                    {/* pregnancy details */}
-                    <div className="pd-section">
-                        <h2 className="pd-section-title">Pregnancy Details</h2>
-                        <div className="pd-grid-2">
-                            {/* NEW: Explicit EDD field first so LMP can auto-calculate */}
-                            <InputField label="Expected Delivery Date (EDD)" value={form.edd} field="edd" isEditing={isEditing} onChange={handleFieldChange} placeholder="EDD" type="date" />
-                            {/* Read-only LMP calculating from EDD */}
+                            <InputField label="Expected Delivery Date (EDD)" value={form.edd} field="edd" isEditing={isEditing} onChange={handleFieldChange} type="date" />
                             <div className="pd-input-group">
-                                <label className="pd-label">Last Menstrual Period</label>
+                                <label className="pd-label">Last Menstrual Period (LMP)</label>
                                 <input className="pd-input pd-readonly" type="date" value={form.lmp} readOnly />
                             </div>
                         </div>
+                        <div className="pd-grid-3">
+                            <InputField label="Gestational Age" value={weeksAlong ? `${weeksAlong} Weeks` : 'Not Set'} isEditing={false} />
+                            <InputField label="Gravida (G)" value={form.gravida} field="gravida" isEditing={isEditing} onChange={handleFieldChange} placeholder="0" />
+                            <InputField label="Para (P)" value={form.para} field="para" isEditing={isEditing} onChange={handleFieldChange} placeholder="0" />
+                        </div>
+                    </div>
+
+                    {/* Clinical Measurements Section */}
+                    <div className="pd-section">
+                        <h2 className="pd-section-title">Clinical Measurements</h2>
+                        <div className="pd-grid-3">
+                            <InputField label="Height (cm)" value={form.height} field="height" isEditing={isEditing} onChange={handleFieldChange} placeholder="160" />
+                            <InputField label="Weight (kg)" value={form.weight} field="weight" isEditing={isEditing} onChange={handleFieldChange} placeholder="60" />
+                            <InputField label="Blood Pressure" value={form.bloodPressure} field="bloodPressure" isEditing={isEditing} onChange={handleFieldChange} placeholder="120/80" />
+                        </div>
                         <div className="pd-grid-2">
+                            <InputField label="Fundal Height (cm)" value={form.fundalHeight} field="fundalHeight" isEditing={isEditing} onChange={handleFieldChange} placeholder="24" />
+                            <InputField label="Fetal Heart Rate (bpm)" value={form.fetalHeartRate} field="fetalHeartRate" isEditing={isEditing} onChange={handleFieldChange} placeholder="140" />
+                        </div>
+                    </div>
+
+                    {/* Obstetric History Section */}
+                    <div className="pd-section">
+                        <h2 className="pd-section-title">Obstetric History</h2>
+                        <div className="pd-grid-3">
+                            <InputField label="Previous C-Sections" value={form.previousCSections} field="previousCSections" isEditing={isEditing} onChange={handleFieldChange} placeholder="0" />
+                            <InputField label="Previous Miscarriages" value={form.previousMiscarriages} field="previousMiscarriages" isEditing={isEditing} onChange={handleFieldChange} placeholder="0" />
+                            <InputField label="Previous Stillbirths" value={form.previousStillbirths} field="previousStillbirths" isEditing={isEditing} onChange={handleFieldChange} placeholder="0" />
+                        </div>
+                    </div>
+
+                    {/* Complications & Risks Section */}
+                    <div className="pd-section">
+                        <h2 className="pd-section-title">Pregnancy Complications & Risk Factors</h2>
+                        <div className="pd-grid-1">
                             <div className="pd-input-group">
-                                <label className="pd-label">Registration Date</label>
-                                <input className="pd-input pd-readonly" type="date" value={form.registrationDate} readOnly />
+                                <label className="pd-label">Current Complications</label>
+                                <textarea 
+                                    className={`pd-input ${!isEditing ? 'pd-readonly-styled' : ''}`}
+                                    value={form.complications || ''}
+                                    onChange={(e) => handleFieldChange('complications', e.target.value)}
+                                    readOnly={!isEditing}
+                                    placeholder="None noted"
+                                    style={{ minHeight: '80px', fontFamily: 'inherit' }}
+                                />
                             </div>
                         </div>
-                        <div className="pd-grid-2">
-                            <InputField label="Gravida" value={form.gravida} field="gravida" isEditing={isEditing} onChange={handleFieldChange} placeholder="G" />
-                            <InputField label="Para" value={form.para} field="para" isEditing={isEditing} onChange={handleFieldChange} placeholder="P" />
-                        </div>
-                        <div className="pd-grid-2">
-                            <InputField label="Previous C-Sections" value={form.previousCSections} field="previousCSections" isEditing={isEditing} onChange={handleFieldChange} placeholder="Y/N" />
-                            <InputField label="Previous Miscarriages" value={form.previousMiscarriages} field="previousMiscarriages" isEditing={isEditing} onChange={handleFieldChange} placeholder="Name" />
-                        </div>
-                        <div className="pd-grid-2">
-                            <InputField label="Previous Stillbirths" value={form.previousStillbirths} field="previousStillbirths" isEditing={isEditing} onChange={handleFieldChange} placeholder="Name" />
-                            <InputField label="Blood Group" value={form.bloodGroup} field="bloodGroup" isEditing={isEditing} onChange={handleFieldChange} placeholder="Name" />
-                        </div>
-                        <div className="pd-grid-2">
-                            <InputField label="Height" value={form.height} field="height" isEditing={isEditing} onChange={handleFieldChange} placeholder="Name" />
-                            <InputField label="Weight" value={form.weight} field="weight" isEditing={isEditing} onChange={handleFieldChange} placeholder="Name" />
+                    </div>
+
+                    {/* Midwife Notes Section */}
+                    <div className="pd-section">
+                        <h2 className="pd-section-title">Midwife Clinical Notes</h2>
+                        <div className="pd-grid-1">
+                            <div className="pd-input-group">
+                                <label className="pd-label">Observations & Plan</label>
+                                <textarea 
+                                    className={`pd-input ${!isEditing ? 'pd-readonly-styled' : ''}`}
+                                    value={form.midwifeNotes || ''}
+                                    onChange={(e) => handleFieldChange('midwifeNotes', e.target.value)}
+                                    readOnly={!isEditing}
+                                    placeholder="Enter clinical observations..."
+                                    style={{ minHeight: '120px', fontFamily: 'inherit' }}
+                                />
+                            </div>
                         </div>
                     </div>
 
@@ -282,41 +334,65 @@ const PregnancyDetails = ({ midwifeId }) => {
 
             {/* Trimester Progress Chart (Renders at bottom only if LMP is calculated) */}
             {isChartVisible && (
-                <div className="dashboard-panel pd-trimester-chart">
-                    <h3 className="pd-chart-title">Pregnancy Timeline & Trimester Progress</h3>
+                <div id="pregnancy-tracker" className="dashboard-panel pd-trimester-chart">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        <div>
+                            <h3 className="pd-chart-title">Clinical Pregnancy Progress Tracker</h3>
+                            <p style={{ fontSize: '13px', color: '#64748b' }}>Automatically synchronized with LMP: <strong>{form.lmp}</strong></p>
+                        </div>
+                        <span className="badge badge-primary" style={{ padding: '8px 16px', fontSize: '14px' }}>
+                            {trimesterName}
+                        </span>
+                    </div>
                     
-                    <div className="pd-chart-stats">
+                    <div className="pd-chart-stats" style={{ marginTop: '20px' }}>
                         <div className="pd-chart-stat-box">
-                            <span>Current Trimester</span>
-                            <h4>{trimesterName}</h4>
+                            <span>Current Gestational Week</span>
+                            <h4>Week {weeksAlong}</h4>
                         </div>
                         <div className="pd-chart-stat-box">
-                            <span>Weeks Completed</span>
-                            <h4>{weeksAlong} out of 40</h4>
+                            <span>Days Remaining</span>
+                            <h4>{Math.max(0, (40 * 7) - (weeksAlong * 7))} Days</h4>
                         </div>
                         <div className="pd-chart-stat-box">
-                            <span>Weeks Remaining</span>
-                            <h4>{Math.max(0, 40 - weeksAlong)}</h4>
+                            <span>Estimated Due Date</span>
+                            <h4>{new Date(form.edd).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })}</h4>
                         </div>
                     </div>
 
                     <div className="pd-timeline-wrapper">
                         <div className="pd-timeline-bar-bg">
-                            {/* Week 1-12 */}
                             <div className="pd-timeline-segment t1" style={{ width: '30%' }}></div>
-                            {/* Week 13-26 */}
                             <div className="pd-timeline-segment t2" style={{ width: '35%' }}></div>
-                            {/* Week 27-40 */}
                             <div className="pd-timeline-segment t3" style={{ width: '35%' }}></div>
-                            
-                            {/* Progress Fill over top */}
-                            <div className="pd-timeline-progress-fill" style={{ width: `${(weeksAlong/40)*100}%` }}></div>
+                            <div className="pd-timeline-progress-fill" style={{ width: `${Math.min(100, (weeksAlong/40)*100)}%` }}></div>
                         </div>
                         <div className="pd-timeline-labels">
-                            <span>Week 0 (LMP)</span>
-                            <span style={{ marginLeft: '18%' }}>Week 13</span>
-                            <span style={{ marginLeft: '17%' }}>Week 27</span>
-                            <span>Week 40 (EDD)</span>
+                            <span>Conception (W0)</span>
+                            <span style={{ position: 'absolute', left: '30%' }}>W13</span>
+                            <span style={{ position: 'absolute', left: '65%' }}>W28</span>
+                            <span>Delivery (W40)</span>
+                        </div>
+                    </div>
+
+                    <div style={{ marginTop: '40px' }}>
+                        <h4 style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            Clinical Milestones Timeline
+                        </h4>
+                        <div className="pd-milestone-grid">
+                            {PREGNANCY_MILESTONES.map((m, idx) => {
+                                const isPassed = weeksAlong >= m.week;
+                                const isCurrent = weeksAlong >= m.week && (idx === PREGNANCY_MILESTONES.length - 1 || weeksAlong < PREGNANCY_MILESTONES[idx+1].week);
+                                
+                                return (
+                                    <div key={m.week} className={`milestone-card ${isCurrent ? 'current' : ''}`} style={{ opacity: isPassed && !isCurrent ? 0.6 : 1 }}>
+                                        <div className="milestone-week">WEEK {m.week}</div>
+                                        <h5 style={{ margin: '5px 0' }}>{m.label}</h5>
+                                        <p style={{ fontSize: '12px', margin: 0, color: '#64748b' }}>{m.detail}</p>
+                                        {isCurrent && <div style={{ position: 'absolute', top: '-10px', right: '10px', background: '#10b981', color: 'white', fontSize: '9px', padding: '2px 6px', borderRadius: '4px', fontWeight: '800' }}>CURRENT</div>}
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
                 </div>

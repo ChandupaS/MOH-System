@@ -11,7 +11,7 @@ const MOODS_LIST = ['Happy', 'Sad', 'Angry', 'Scared', 'Excited', 'Tired', 'Othe
 
 const SymptomTracker = ({ profile }) => {
     const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
-    
+
     // Mood State
     const [selectedMoods, setSelectedMoods] = useState([]);
     const [moodNotes, setMoodNotes] = useState('');
@@ -56,10 +56,10 @@ const SymptomTracker = ({ profile }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         // Build payload mapped to backend (symptoms, severity, notes)
         const activeSymptoms = symptoms.filter(s => s.checked);
-        
+
         let symptomsString = activeSymptoms.map(s => {
             const name = s.name === 'Other' ? `Other (${s.text})` : s.name;
             const time = [s.timeAM ? 'AM' : null, s.timePM ? 'PM' : null].filter(Boolean).join(', ');
@@ -86,13 +86,13 @@ const SymptomTracker = ({ profile }) => {
             await axios.post('http://localhost:8080/api/mother/symptoms', payload);
             setSubmitSuccess(true);
             setTimeout(() => setSubmitSuccess(false), 3000);
-            
+
             // Reset form
             setDate(new Date().toISOString().split('T')[0]);
             setSelectedMoods([]);
             setMoodNotes('');
             setSymptoms(symptoms.map(s => ({ ...s, checked: false, severity: '', timeAM: false, timePM: false, text: '' })));
-            
+
             if (showLogs) fetchLogs(); // Auto refresh if logs open
         } catch (error) {
             console.error("Error submitting symptoms:", error);
@@ -104,7 +104,7 @@ const SymptomTracker = ({ profile }) => {
         <div className="symptom-tracker-container">
             <div className="tracker-header">
                 <h2 className="page-title">Mood and Symptom Tracker</h2>
-                <button 
+                <button
                     className="btn-clinical btn-outline"
                     onClick={() => {
                         if (!showLogs) fetchLogs();
@@ -154,28 +154,28 @@ const SymptomTracker = ({ profile }) => {
             )}
 
             <form onSubmit={handleSubmit} className="tracker-form">
-                
+
                 {/* Mood Tracker Card */}
                 <div className="dashboard-panel">
                     <h3>Mood Tracker</h3>
                     <div className="form-group date-group">
                         <label>Date</label>
-                        <input 
-                            type="date" 
-                            className="clinical-input" 
-                            value={date} 
+                        <input
+                            type="date"
+                            className="clinical-input"
+                            value={date}
                             onChange={(e) => setDate(e.target.value)}
                             required
                         />
                     </div>
-                    
+
                     <div className="form-group">
                         <label>How are you feeling today?</label>
                         <div className="moods-grid">
                             {MOODS_LIST.map(mood => (
                                 <label key={mood} className={`mood-chip ${selectedMoods.includes(mood) ? 'selected' : ''}`}>
-                                    <input 
-                                        type="checkbox" 
+                                    <input
+                                        type="checkbox"
                                         checked={selectedMoods.includes(mood)}
                                         onChange={() => toggleMood(mood)}
                                         className="hidden-checkbox"
@@ -184,8 +184,8 @@ const SymptomTracker = ({ profile }) => {
                                 </label>
                             ))}
                         </div>
-                        <textarea 
-                            className="clinical-input mt-3" 
+                        <textarea
+                            className="clinical-input mt-3"
                             placeholder="How do you feel? (Additional notes)"
                             value={moodNotes}
                             onChange={(e) => setMoodNotes(e.target.value)}
@@ -198,24 +198,24 @@ const SymptomTracker = ({ profile }) => {
                 <div className="dashboard-panel">
                     <h3>Physical Symptoms</h3>
                     <p className="subtext">Select all symptoms that apply and indicate their severity and time of day.</p>
-                    
+
                     <div className="symptoms-list">
                         {symptoms.map((symptom, index) => (
                             <div key={index} className={`symptom-row ${symptom.checked ? 'active-row' : ''}`}>
                                 <div className="symptom-primary">
                                     <label className="checkbox-label">
-                                        <input 
-                                            type="checkbox" 
+                                        <input
+                                            type="checkbox"
                                             checked={symptom.checked}
                                             onChange={(e) => updateSymptom(index, 'checked', e.target.checked)}
                                         />
                                         <span className="symptom-name">{symptom.name}</span>
                                     </label>
-                                    
+
                                     {symptom.name === 'Other' && symptom.checked && (
-                                        <input 
-                                            type="text" 
-                                            className="clinical-input small-input ml-2" 
+                                        <input
+                                            type="text"
+                                            className="clinical-input small-input ml-2"
                                             placeholder="Specify symptom..."
                                             value={symptom.text}
                                             onChange={(e) => updateSymptom(index, 'text', e.target.value)}
@@ -228,8 +228,8 @@ const SymptomTracker = ({ profile }) => {
                                         <div className="severity-selector">
                                             {['Mild', 'Moderate', 'Severe'].map(sev => (
                                                 <label key={sev} className="radio-label">
-                                                    <input 
-                                                        type="radio" 
+                                                    <input
+                                                        type="radio"
                                                         name={`severity-${index}`}
                                                         value={sev}
                                                         checked={symptom.severity === sev}
@@ -240,19 +240,19 @@ const SymptomTracker = ({ profile }) => {
                                                 </label>
                                             ))}
                                         </div>
-                                        
+
                                         <div className="time-selector">
                                             <label className="checkbox-label inline-check">
-                                                <input 
-                                                    type="checkbox" 
+                                                <input
+                                                    type="checkbox"
                                                     checked={symptom.timeAM}
                                                     onChange={(e) => updateSymptom(index, 'timeAM', e.target.checked)}
                                                 />
                                                 AM
                                             </label>
                                             <label className="checkbox-label inline-check">
-                                                <input 
-                                                    type="checkbox" 
+                                                <input
+                                                    type="checkbox"
                                                     checked={symptom.timePM}
                                                     onChange={(e) => updateSymptom(index, 'timePM', e.target.checked)}
                                                 />

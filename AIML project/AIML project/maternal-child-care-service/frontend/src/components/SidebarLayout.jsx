@@ -11,14 +11,18 @@ const SidebarLayout = ({ userName, role, menuItems, children }) => {
     };
 
     return (
-        <div className="layout-container">
-            {/* Sidebar */}
-            <aside className="sidebar">
+        <div className="sidebar-wrapper">
+            <aside className="sidebar-inset">
                 <div className="sidebar-header">
                     <h1 className="system-name">සුව සෙවණ</h1>
-                    <div className="user-welcome">
-                        <span className="welcome-text">Welcome,</span>
-                        <span className="user-name">{userName || 'User'}</span>
+                    <div className="portal-badge-mini">{role} Portal</div>
+                </div>
+
+                <div className="user-profile-section">
+                    <div className="avatar-placeholder">{userName?.charAt(0) || 'U'}</div>
+                    <div className="user-info-text">
+                        <span className="user-name-display">{userName || 'User'}</span>
+                        <span className="user-role-label">{role}</span>
                     </div>
                 </div>
 
@@ -28,23 +32,22 @@ const SidebarLayout = ({ userName, role, menuItems, children }) => {
                             key={index}
                             to={item.path}
                             end={item.exact}
-                            className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+                            className={({ isActive }) => `nav-item-modern ${isActive ? 'active-modern' : ''}`}
                         >
                             <span className="nav-label">{item.label}</span>
                         </NavLink>
                     ))}
                 </nav>
 
-                <div className="sidebar-footer">
-                    <button onClick={handleLogout} className="logout-btn">Logout</button>
+                <div className="sidebar-footer-button">
+                    <button onClick={handleLogout} className="logout-btn-modern">
+                        Sign Out
+                    </button>
                 </div>
             </aside>
 
-            {/* Main Content Area */}
-            <main className="main-content">
-                <div className="main-content-inner">
-                    {children}
-                </div>
+            <main className="main-content-area">
+                {children}
             </main>
         </div>
     );

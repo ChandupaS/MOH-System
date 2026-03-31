@@ -79,6 +79,12 @@ public class MidwifeController {
                 profile.setLmp(LocalDate.parse(data.get("lmp")));
             if (data.get("healthConditions") != null)
                 profile.setHealthConditions(data.get("healthConditions"));
+            
+            if (data.get("bloodPressure") != null) profile.setBloodPressure(data.get("bloodPressure"));
+            if (data.get("fundalHeight") != null) profile.setFundalHeight(data.get("fundalHeight"));
+            if (data.get("fetalHeartRate") != null) profile.setFetalHeartRate(data.get("fetalHeartRate"));
+            if (data.get("complications") != null) profile.setComplications(data.get("complications"));
+            if (data.get("midwifeNotes") != null) profile.setMidwifeNotes(data.get("midwifeNotes"));
 
             MotherProfile saved = motherService.registerMother(profile);
             return ResponseEntity.ok(saved);
@@ -111,6 +117,12 @@ public class MidwifeController {
             if (data.get("height") != null) profile.setHeight(data.get("height"));
             if (data.get("weight") != null) profile.setWeight(data.get("weight"));
             if (data.get("allergies") != null) profile.setAllergies(data.get("allergies"));
+
+            if (data.get("bloodPressure") != null) profile.setBloodPressure(data.get("bloodPressure"));
+            if (data.get("fundalHeight") != null) profile.setFundalHeight(data.get("fundalHeight"));
+            if (data.get("fetalHeartRate") != null) profile.setFetalHeartRate(data.get("fetalHeartRate"));
+            if (data.get("complications") != null) profile.setComplications(data.get("complications"));
+            if (data.get("midwifeNotes") != null) profile.setMidwifeNotes(data.get("midwifeNotes"));
             
             if (data.get("dob") != null && !data.get("dob").isEmpty())
                 profile.setDob(LocalDate.parse(data.get("dob")));
@@ -182,12 +194,48 @@ public class MidwifeController {
         }).orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/{midwifeId}/mother/{id}/vaccinations")
+    public ResponseEntity<?> getMotherVaccinationsByType(@PathVariable Long midwifeId, @PathVariable Long id, @RequestParam String type) {
+        return midwifeProfileRepository.findByUserId(midwifeId).flatMap(midwife ->
+            motherProfileRepository.findById(id).filter(m -> m.getGnDivision().equals(midwife.getGnDivision()))
+        ).map(mother -> ResponseEntity.ok(vaccinationScheduleRepository.findByTypeAndMotherIdOrderByScheduledDateAsc(type, mother.getId())))
+        .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/{midwifeId}/mother/{id}/vaccinations")
+    public ResponseEntity<?> addVaccination(@PathVariable Long midwifeId, @PathVariable Long id, @RequestBody VaccinationSchedule vacc) {
+        return midwifeProfileRepository.findByUserId(midwifeId).flatMap(midwife ->
+            motherProfileRepository.findById(id).filter(m -> m.getGnDivision().equals(midwife.getGnDivision()))
+        ).map(mother -> {
+            vacc.setUser(mother.getUser());
+            vacc.setMother(mother);
+            return ResponseEntity.ok(vaccinationScheduleRepository.save(vacc));
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
     @PutMapping("/vaccination/{id}")
     public ResponseEntity<?> updateVaccinationStatus(@PathVariable Long id, @RequestBody Map<String, String> data) {
         return vaccinationScheduleRepository.findById(id).map(vacc -> {
             if (data.containsKey("status")) vacc.setStatus(data.get("status"));
-            if ("Completed".equals(data.get("status"))) vacc.setAdministeredDate(LocalDate.now());
+            if (data.containsKey("vaccineName")) vacc.setVaccineName(data.get("vaccineName"));
+            if (data.containsKey("doseNumber")) vacc.setDoseNumber(data.get("doseNumber"));
+            if (data.containsKey("batchNumber")) vacc.setBatchNumber(data.get("batchNumber"));
+            if (data.containsKey("administeringProvider")) vacc.setAdministeringProvider(data.get("administeringProvider"));
+            
+            if (data.containsKey("scheduledDate")) vacc.setScheduledDate(LocalDate.parse(data.get("scheduledDate")));
+            if (data.containsKey("administeredDate")) {
+                vacc.setAdministeredDate(data.get("administeredDate") != null && !data.get("administeredDate").isEmpty() 
+                    ? LocalDate.parse(data.get("administeredDate")) : null);
+            }
+            
+            if ("Completed".equals(data.get("status")) && vacc.getAdministeredDate() == null) vacc.setAdministeredDate(LocalDate.now());
             return ResponseEntity.ok(vaccinationScheduleRepository.save(vacc));
         }).orElse(ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/vaccination/{id}")
+    public ResponseEntity<?> deleteVaccination(@PathVariable Long id) {
+        vaccinationScheduleRepository.deleteById(id);
+        return ResponseEntity.ok().build();
     }
 }

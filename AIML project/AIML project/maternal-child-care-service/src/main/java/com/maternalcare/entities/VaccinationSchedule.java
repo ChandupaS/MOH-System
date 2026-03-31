@@ -23,11 +23,24 @@ public class VaccinationSchedule {
     @JoinColumn(name = "user_id", nullable = false)
     private User user; // Mother or Child User
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "mother_id")
+    private MotherProfile mother; // Associated Mother Profile
+
     @Column(nullable = false)
     private String type; // MOTHER or CHILD
 
     @Column(name = "vaccine_name", nullable = false)
     private String vaccineName;
+
+    @Column(name = "dose_number")
+    private String doseNumber;
+
+    @Column(name = "batch_number")
+    private String batchNumber;
+
+    @Column(name = "administering_provider")
+    private String administeringProvider;
 
     @Column(name = "scheduled_date", nullable = false)
     private LocalDate scheduledDate;

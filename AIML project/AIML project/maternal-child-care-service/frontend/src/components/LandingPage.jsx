@@ -148,10 +148,9 @@ const LandingPage = () => {
                     <div className="footer-links">
                         <h4>Portal</h4>
                         <ul>
-                            <li onClick={() => navigate('/staff-login')}>Midwife Login</li>
-                            <li onClick={() => navigate('/staff-login')}>Doctor Login</li>
-                            <li onClick={() => navigate('/mother-login')}>Mother Login</li>
-                            <li onClick={() => navigate('/register-mother')}>Mother Registration</li>
+                            <li><span onClick={() => navigate('/staff-login')} style={{cursor:'pointer'}}>Midwife Login</span></li>
+                            <li><span onClick={() => navigate('/staff-login')} style={{cursor:'pointer'}}>Doctor Login</span></li>
+                            <li><span onClick={() => navigate('/mother-login')} style={{cursor:'pointer'}}>Mother Login</span></li>
                         </ul>
                     </div>
                     <div className="footer-links">

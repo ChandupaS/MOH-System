@@ -10,11 +10,11 @@ const DoctorDashboard = () => {
 
     const [loadingMothers, setLoadingMothers] = useState(true);
     const [mothersList, setMothersList] = useState([]);
-    
+
     // Forms state
     const [midwifeForm, setMidwifeForm] = useState({ name: '', email: '', password: '', gnDivision: 'Malabe East' });
     const [midwifeMsg, setMidwifeMsg] = useState('');
-    
+
     const [announcementForm, setAnnouncementForm] = useState({ title: '', body: '', priority: 'General', target: 'Both' });
     const [announcementMsg, setAnnouncementMsg] = useState('');
     const [announcementsList, setAnnouncementsList] = useState([]);
@@ -31,7 +31,7 @@ const DoctorDashboard = () => {
                 console.error(err);
                 setByStats({ totalMothers: 0, totalMidwives: 0, divisionsCovered: 0, activeHomeVisits: 0 });
             });
-            
+
         fetchMothers();
         fetchAnnouncements();
     }, [user, navigate]);
@@ -194,7 +194,7 @@ const DoctorDashboard = () => {
                                     {editingId && <button type="button" className="btn-clinical-outline" onClick={() => { setEditingId(null); setAnnouncementForm({ title: '', body: '', priority: 'General', target: 'Both' }); }}>Cancel Edit</button>}
                                 </div>
                             </form>
-                            
+
                             <h3>Recent System Broadcasts</h3>
                             {announcementsList.length === 0 ? <p>No announcements posted yet.</p> : announcementsList.map(a => (
                                 <div key={a.id} className="list-item-clinical" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -288,6 +288,19 @@ const DoctorOverview = ({ stats, user, navigate, announcementsList, mothersList 
                 </div>
             </div>
         </div>
+    );
+};
+
+export default DoctorDashboard;
+                ))}
+{ announcementsList.length === 0 && <p>No announcements.</p> }
+<div style={{ marginTop: '18px' }}>
+    <button onClick={() => navigate('/doctor/announcements')} className="btn-clinical">
+        Manage Announcements
+    </button>
+</div>
+            </div >
+        </div >
     );
 };
 

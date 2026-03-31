@@ -47,7 +47,7 @@ const MotherProfileHub = ({ midwifeId }) => {
                 allergies: editForm.allergies,
                 healthConditions: editForm.healthConditions,
             };
-            
+
             const res = await axios.put(
                 `http://localhost:8080/api/midwife/${midwifeId}/mother/${id}`,
                 updateData
@@ -105,15 +105,15 @@ const MotherProfileHub = ({ midwifeId }) => {
                 )}
                 {editing && (
                     <div style={{ display: 'flex', gap: '10px' }}>
-                        <button 
-                            className="btn-clinical" 
+                        <button
+                            className="btn-clinical"
                             onClick={handleSaveChanges}
                             disabled={saving}
                         >
                             {saving ? 'Saving...' : 'Save Changes'}
                         </button>
-                        <button 
-                            className="btn-clinical-outline" 
+                        <button
+                            className="btn-clinical-outline"
                             onClick={() => {
                                 setEditing(false);
                                 setEditForm(profile);
@@ -163,109 +163,109 @@ const MotherProfileHub = ({ midwifeId }) => {
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '15px', marginTop: '15px' }}>
                         <div>
                             <label>Expected Delivery Date</label>
-                            <input 
-                                type="date" 
-                                value={editForm.edd || ''} 
-                                onChange={(e) => setEditForm({...editForm, edd: e.target.value})}
+                            <input
+                                type="date"
+                                value={editForm.edd || ''}
+                                onChange={(e) => setEditForm({ ...editForm, edd: e.target.value })}
                                 style={{ width: '100%', padding: '8px' }}
                             />
                         </div>
                         <div>
                             <label>Last Menstrual Period</label>
-                            <input 
-                                type="date" 
-                                value={editForm.lmp || ''} 
-                                onChange={(e) => setEditForm({...editForm, lmp: e.target.value})}
+                            <input
+                                type="date"
+                                value={editForm.lmp || ''}
+                                onChange={(e) => setEditForm({ ...editForm, lmp: e.target.value })}
                                 style={{ width: '100%', padding: '8px' }}
                             />
                         </div>
                         <div>
                             <label>Gravida (Number of Pregnancies)</label>
-                            <input 
-                                type="number" 
-                                value={editForm.gravida || ''} 
-                                onChange={(e) => setEditForm({...editForm, gravida: e.target.value})}
+                            <input
+                                type="number"
+                                value={editForm.gravida || ''}
+                                onChange={(e) => setEditForm({ ...editForm, gravida: e.target.value })}
                                 style={{ width: '100%', padding: '8px' }}
                             />
                         </div>
                         <div>
                             <label>Para (Number of Live Births)</label>
-                            <input 
-                                type="number" 
-                                value={editForm.para || ''} 
-                                onChange={(e) => setEditForm({...editForm, para: e.target.value})}
+                            <input
+                                type="number"
+                                value={editForm.para || ''}
+                                onChange={(e) => setEditForm({ ...editForm, para: e.target.value })}
                                 style={{ width: '100%', padding: '8px' }}
                             />
                         </div>
                         <div>
                             <label>Previous C-Sections</label>
-                            <input 
-                                type="number" 
-                                value={editForm.previousCSections || ''} 
-                                onChange={(e) => setEditForm({...editForm, previousCSections: e.target.value})}
+                            <input
+                                type="number"
+                                value={editForm.previousCSections || ''}
+                                onChange={(e) => setEditForm({ ...editForm, previousCSections: e.target.value })}
                                 style={{ width: '100%', padding: '8px' }}
                             />
                         </div>
                         <div>
                             <label>Previous Miscarriages</label>
-                            <input 
-                                type="number" 
-                                value={editForm.previousMiscarriages || ''} 
-                                onChange={(e) => setEditForm({...editForm, previousMiscarriages: e.target.value})}
+                            <input
+                                type="number"
+                                value={editForm.previousMiscarriages || ''}
+                                onChange={(e) => setEditForm({ ...editForm, previousMiscarriages: e.target.value })}
                                 style={{ width: '100%', padding: '8px' }}
                             />
                         </div>
                         <div>
                             <label>Previous Stillbirths</label>
-                            <input 
-                                type="number" 
-                                value={editForm.previousStillbirths || ''} 
-                                onChange={(e) => setEditForm({...editForm, previousStillbirths: e.target.value})}
+                            <input
+                                type="number"
+                                value={editForm.previousStillbirths || ''}
+                                onChange={(e) => setEditForm({ ...editForm, previousStillbirths: e.target.value })}
                                 style={{ width: '100%', padding: '8px' }}
                             />
                         </div>
                         <div>
                             <label>Blood Group</label>
-                            <input 
-                                type="text" 
-                                value={editForm.bloodGroup || ''} 
-                                onChange={(e) => setEditForm({...editForm, bloodGroup: e.target.value})}
+                            <input
+                                type="text"
+                                value={editForm.bloodGroup || ''}
+                                onChange={(e) => setEditForm({ ...editForm, bloodGroup: e.target.value })}
                                 style={{ width: '100%', padding: '8px' }}
                                 placeholder="e.g., O+, A-, B+"
                             />
                         </div>
                         <div>
                             <label>Height (cm)</label>
-                            <input 
-                                type="text" 
-                                value={editForm.height || ''} 
-                                onChange={(e) => setEditForm({...editForm, height: e.target.value})}
+                            <input
+                                type="text"
+                                value={editForm.height || ''}
+                                onChange={(e) => setEditForm({ ...editForm, height: e.target.value })}
                                 style={{ width: '100%', padding: '8px' }}
                             />
                         </div>
                         <div>
                             <label>Weight (kg)</label>
-                            <input 
-                                type="text" 
-                                value={editForm.weight || ''} 
-                                onChange={(e) => setEditForm({...editForm, weight: e.target.value})}
+                            <input
+                                type="text"
+                                value={editForm.weight || ''}
+                                onChange={(e) => setEditForm({ ...editForm, weight: e.target.value })}
                                 style={{ width: '100%', padding: '8px' }}
                             />
                         </div>
                         <div style={{ gridColumn: '1 / -1' }}>
                             <label>Health Conditions</label>
-                            <textarea 
-                                value={editForm.healthConditions || ''} 
-                                onChange={(e) => setEditForm({...editForm, healthConditions: e.target.value})}
+                            <textarea
+                                value={editForm.healthConditions || ''}
+                                onChange={(e) => setEditForm({ ...editForm, healthConditions: e.target.value })}
                                 style={{ width: '100%', padding: '8px', minHeight: '80px' }}
                                 placeholder="Comma-separated list (e.g., Diabetes, Hypertension)"
                             />
                         </div>
                         <div style={{ gridColumn: '1 / -1' }}>
                             <label>Allergies</label>
-                            <textarea 
-                                value={editForm.allergies || ''} 
-                                onChange={(e) => setEditForm({...editForm, allergies: e.target.value})}
+                            <textarea
+                                value={editForm.allergies || ''}
+                                onChange={(e) => setEditForm({ ...editForm, allergies: e.target.value })}
                                 style={{ width: '100%', padding: '8px', minHeight: '60px' }}
                                 placeholder="Enter any known allergies"
                             />
@@ -341,6 +341,20 @@ const MotherProfileHub = ({ midwifeId }) => {
 
                     {/* Navigation Grid */}
                     <div className="hub-nav-grid" style={{ marginTop: '30px' }}>
+                        <div className="hub-nav-card" onClick={() => navigate(`/midwife/mothers/profile/${id}/pregnancy`)}>
+                            <h4>Pregnancy Details</h4>
+                            <p>{profile.edd ? `EDD: ${new Date(profile.edd).toLocaleDateString()}` : 'No EDD set'}</p>
+                            <span className="badge badge-primary" style={{ marginTop: '10px', display: 'inline-block' }}>
+                                {profile.lmp ? 'Record Complete' : 'Details Pending'}
+                            </span>
+                        </div>
+
+                        <div className="hub-nav-card" onClick={() => navigate(`/midwife/mothers/profile/${id}/child`)}>
+                            <h4>Child Records</h4>
+                            <p>Development tracking, birth details, and neonatal history.</p>
+                            <span className="badge badge-muted" style={{ marginTop: '10px', display: 'inline-block' }}>View Profile</span>
+                        </div>
+
                         <div className="hub-nav-card" onClick={() => navigate(`/midwife/mothers/profile/${id}/vaccinations`)}>
                             <h4>Vaccination Schedule</h4>
                             <p>Manage and track maternal and child immunization schedules.</p>
