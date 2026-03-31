@@ -4,6 +4,7 @@ import axios from 'axios';
 import SidebarLayout from './SidebarLayout';
 import SymptomTracker from './SymptomTracker';
 import PregnancyDetails from './PregnancyDetails';
+import MotherHomeVisits from './MotherHomeVisits';
 
 const PREGNANCY_MILESTONES = [
     { week: 4, label: 'Confirmation', detail: 'HCG levels rising. Blood pregnancy test confirmed.' },
@@ -26,6 +27,8 @@ const MotherDashboard = () => {
     const [editForm, setEditForm] = useState({});
     const [saving, setSaving] = useState(false);
     const [message, setMessage] = useState('');
+    const [nextVisit, setNextVisit] = useState(null);
+    const [lastVisit, setLastVisit] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -39,9 +42,21 @@ const MotherDashboard = () => {
 
     const fetchProfile = async () => {
         try {
-            const res = await axios.get(`http://localhost:8081/api/mother/${user.id}/profile`);
+            const res = await axios.get(`http://localhost:8080/api/mother/${user.id}/profile`);
             setProfile(res.data);
             setEditForm(res.data);
+            
+            try {
+                const vRes = await axios.get(`http://localhost:8080/api/mother/home-visits/${user.id}`);
+                const visits = vRes.data;
+                const today = new Date();
+                today.setHours(0,0,0,0);
+                const upcoming = visits.filter(v => v.status === 'Upcoming' && new Date(v.scheduledDate) >= today).sort((a,b) => new Date(a.scheduledDate) - new Date(b.scheduledDate));
+                setNextVisit(upcoming.length > 0 ? upcoming[0] : null);
+                const completed = visits.filter(v => v.status === 'Completed').sort((a,b) => new Date(a.scheduledDate) - new Date(b.scheduledDate));
+                setLastVisit(completed.length > 0 ? completed[completed.length - 1] : null);
+            } catch(e) { console.error("Could not fetch visits", e); }
+
             setLoading(false);
         } catch (err) {
             console.error('Failed to load profile:', err);
@@ -63,7 +78,7 @@ const MotherDashboard = () => {
             };
             
             const res = await axios.put(
-                `http://localhost:8081/api/mother/${user.id}/profile`,
+                `http://localhost:8080/api/mother/${user.id}/profile`,
                 updateData
             );
             setProfile(res.data);
@@ -93,6 +108,7 @@ const MotherDashboard = () => {
         { label: 'Pregnancy Details', path: '/mother/pregnancy' },
         { label: 'Symptom Tracker', path: '/mother/symptoms' },
         { label: 'Vaccination Records', path: '/mother/vaccinations' },
+        { label: 'Home Visits', path: '/mother/visits' },
     ];
 
     return (
@@ -205,6 +221,34 @@ const MotherDashboard = () => {
                                 <p style={{ color: 'var(--text-muted)', maxWidth: '500px', margin: '0 auto' }}>Your midwife hasn't added your clinical pregnancy details yet. Once they record your last period date, you'll see your week-by-week progress here!</p>
                             </div>
                         )}
+
+                        {/* Recent & Upcoming Visit Quick Links */}
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px', marginTop: '30px' }}>
+                            <div className="dashboard-panel" style={{ margin: 0, padding: '20px', borderLeft: '4px solid var(--accent)', cursor: 'pointer', transition: 'all 0.2s' }} onClick={() => navigate('/mother/visits')}>
+                                <h3 style={{ fontSize: '1.1rem', margin: '0 0 12px 0', borderBottom: 'none', paddingBottom: 0 }}>📅 Next Home Visit</h3>
+                                {nextVisit ? (
+                                    <>
+                                        <h2 style={{ color: 'var(--primary)', margin: '0 0 5px 0', fontSize: '1.4rem' }}>{new Date(nextVisit.scheduledDate).toLocaleDateString()}</h2>
+                                        <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.9rem' }}>Status: {nextVisit.status}</p>
+                                    </>
+                                ) : (
+                                    <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.9rem' }}>No upcoming scheduled visits.</p>
+                                )}
+                            </div>
+                            <div className="dashboard-panel" style={{ margin: 0, padding: '20px', borderLeft: '4px solid var(--success)', cursor: 'pointer', transition: 'all 0.2s' }} onClick={() => navigate('/mother/visits')}>
+                                <h3 style={{ fontSize: '1.1rem', margin: '0 0 12px 0', borderBottom: 'none', paddingBottom: 0 }}>✅ Last Home Visit</h3>
+                                {lastVisit ? (
+                                    <>
+                                        <h2 style={{ color: 'var(--success)', margin: '0 0 5px 0', fontSize: '1.4rem' }}>{new Date(lastVisit.scheduledDate).toLocaleDateString()}</h2>
+                                        <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.9rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                            {lastVisit.midwifeNotes ? `Notes: ${lastVisit.midwifeNotes}` : "Vitals recorded successfully."}
+                                        </p>
+                                    </>
+                                ) : (
+                                    <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.9rem' }}>No past visits recorded yet.</p>
+                                )}
+                            </div>
+                        </div>
 
                         {/* Announcements Card (In-Dashboard) */}
                         <div className="dashboard-panel" style={{ marginTop: '30px', borderLeft: '4px solid var(--warning)' }}>
@@ -403,6 +447,7 @@ const MotherDashboard = () => {
                 } />
                 <Route path="/pregnancy" element={<PregnancyDetails motherUserId={user.id} readOnly={true} />} />
                 <Route path="/symptoms" element={<SymptomTracker />} />
+                <Route path="/visits" element={<MotherHomeVisits userId={user.id} />} />
                 <Route path="/vaccinations" element={
                     <div className="dashboard-panel">
                         <h2>Vaccination Records</h2>

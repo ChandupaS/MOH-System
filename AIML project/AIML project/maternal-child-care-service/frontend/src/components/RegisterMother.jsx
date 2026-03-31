@@ -113,7 +113,7 @@ const RegisterMother = ({ navigate, division = 'Malabe East', midwifeId }) => {
                 fatherNic: form.fatherNic,
             };
 
-            await axios.post(`http://localhost:8081/api/midwife/${midwifeId}/register-mother`, payload);
+            await axios.post(`http://localhost:8080/api/midwife/${midwifeId}/register-mother`, payload);
             setSuccess(true);
             setTimeout(() => navigate('/midwife/mothers'), 1800);
         } catch (err) {

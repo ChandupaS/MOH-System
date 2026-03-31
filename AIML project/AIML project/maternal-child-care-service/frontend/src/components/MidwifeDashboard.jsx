@@ -7,12 +7,13 @@ import RegisterMother from './RegisterMother';
 import MotherProfileHub from './MotherProfileHub';
 import PregnancyDetails from './PregnancyDetails';
 import SymptomTracker from './SymptomTracker';
+import MidwifeHomeVisits from './MidwifeHomeVisits';
 import './MidwifeDashboard.css';
 
 const DIVISION = 'Malabe East'; // In full implementation, fetched from midwife profile
 
 const MidwifeDashboard = () => {
-    const [stats, setByStats] = useState({ totalMothers: 0, todayVisits: 0, weekVisits: 0 });
+    const [stats, setByStats] = useState({ totalMothers: 0, todayVisits: 0, weekVisits: 0, overdueVisits: 0 });
     const [user, setByUser] = useState(JSON.parse(localStorage.getItem('user')));
     const [division, setDivision] = useState(DIVISION);
     const navigate = useNavigate();
@@ -22,21 +23,22 @@ const MidwifeDashboard = () => {
             navigate('/staff-login');
             return;
         }
-        axios.get(`http://localhost:8081/api/midwife/${user.id}/home-visits`)
+        axios.get(`http://localhost:8080/api/midwife/${user.id}/home-visits`)
             .then(res => {
                 setByStats({
-                    totalMothers: res.data.today ? res.data.today.length + 12 : 15,
-                    todayVisits: res.data.today?.length || 2,
-                    weekVisits: res.data.thisWeek?.length || 8
+                    totalMothers: res.data.all ? res.data.all.map(v => v.mother?.id).filter((v, i, a) => a.indexOf(v) === i).length : 15,
+                    todayVisits: res.data.today?.length || 0,
+                    weekVisits: res.data.thisWeek?.length || 0,
+                    overdueVisits: res.data.stats?.overdue || 0
                 });
             })
             .catch(err => {
                 console.error(err);
-                setByStats({ totalMothers: 15, todayVisits: 2, weekVisits: 8 });
+                setByStats({ totalMothers: 15, todayVisits: 0, weekVisits: 0, overdueVisits: 0 });
             });
 
         // Fetch midwife profile to set the correct dynamic division
-        axios.get(`http://localhost:8081/api/midwife/${user.id}/profile`)
+        axios.get(`http://localhost:8080/api/midwife/${user.id}/profile`)
             .then(res => {
                 if (res.data && res.data.gnDivision) {
                     setDivision(res.data.gnDivision);
@@ -70,16 +72,7 @@ const MidwifeDashboard = () => {
                 <Route path="mothers/profile/:id/visits" element={<MidwifeMotherVisits midwifeId={user?.id} />} />
                 <Route path="mothers/profile/:id/vaccinations" element={<MidwifeMotherVaccinations midwifeId={user?.id} />} />
 
-                <Route path="visits" element={
-                    <div>
-                        <h2 className="page-title">Home Visits</h2>
-                        <div className="dashboard-panel">
-                            <div className="empty-state">
-                                <p>Plan and track upcoming visits.</p>
-                            </div>
-                        </div>
-                    </div>
-                } />
+                <Route path="visits" element={<MidwifeHomeVisits midwifeId={user?.id} />} />
                 <Route path="announcements" element={<MidwifeAnnouncements user={user} />} />
                 <Route path="vaccinations" element={
                     <div>
@@ -103,7 +96,7 @@ const MidwifeOverview = ({ stats, user, navigate }) => {
 
             <div className="welcome-card-modern">
                 <h2>Welcome, {user?.name || 'Midwife'}</h2>
-                <p>Manage daily clinical tasks, view appointments, and read announcements for your territory.</p>
+                <p>Manage daily clinical tasks, view appointments, and read announcements for your territory ({DIVISION}).</p>
             </div>
 
             {/* Top Row — KPI Stats (Compact Row) */}
@@ -112,17 +105,17 @@ const MidwifeOverview = ({ stats, user, navigate }) => {
                     <p>Total Mothers</p>
                     <h4>{stats?.totalMothers || 0}</h4>
                 </div>
-                <div className="stat-card-modern">
-                    <p>GN Division</p>
-                    <h4 style={{ fontSize: '1.25rem', marginTop: '10px' }}>{DIVISION}</h4>
-                </div>
-                <div className="stat-card-modern">
+                <div className="stat-card-modern" onClick={() => navigate('/midwife/visits')} style={{ cursor: 'pointer' }}>
                     <p>Today's Visits</p>
                     <h4>{stats?.todayVisits || 0}</h4>
                 </div>
-                <div className="stat-card-modern">
+                <div className="stat-card-modern" onClick={() => navigate('/midwife/visits')} style={{ cursor: 'pointer' }}>
                     <p>Weekly Targets</p>
                     <h4>{stats?.weekVisits || 0}</h4>
+                </div>
+                <div className="stat-card-modern" onClick={() => navigate('/midwife/visits')} style={{ cursor: 'pointer', borderTop: stats?.overdueVisits > 0 ? '3px solid #ef4444' : '' }}>
+                    <p style={{ color: stats?.overdueVisits > 0 ? '#ef4444' : 'inherit' }}>Overdue Visits</p>
+                    <h4 style={{ color: stats?.overdueVisits > 0 ? '#ef4444' : 'inherit' }}>{stats?.overdueVisits || 0}</h4>
                 </div>
             </div>
 
@@ -193,14 +186,14 @@ const MidwifeMotherVisits = ({ midwifeId }) => {
 
     useEffect(() => {
         if (!id) return;
-        axios.get(`http://localhost:8081/api/mother/home-visits/${id}`)
+        axios.get(`http://localhost:8080/api/mother/home-visits/${id}`)
             .then(res => setVisits(res.data))
             .catch(err => console.error(err));
     }, [id]);
 
     const handleStatusUpdate = async (visitId, status) => {
         try {
-            await axios.put(`http://localhost:8081/api/midwife/home-visit/${visitId}`, { status });
+            await axios.put(`http://localhost:8080/api/midwife/home-visit/${visitId}`, { status });
             setVisits(visits.map(v => v.id === visitId ? { ...v, status } : v));
         } catch (err) {
             alert('Failed to update visit status');
@@ -242,7 +235,7 @@ const MidwifeMotherVaccinations = ({ midwifeId }) => {
 
     const fetchVaccines = async () => {
         try {
-            const res = await axios.get(`http://localhost:8081/api/mother/vaccinations/${id}`);
+            const res = await axios.get(`http://localhost:8080/api/mother/vaccinations/${id}`);
             setVaccines(res.data);
             setLoading(false);
         } catch (err) { console.error(err); }
@@ -251,7 +244,7 @@ const MidwifeMotherVaccinations = ({ midwifeId }) => {
     const handleAdd = async (e) => {
         e.preventDefault();
         try {
-            await axios.post(`http://localhost:8081/api/midwife/${midwifeId}/mother/${id}/vaccinations`, formData);
+            await axios.post(`http://localhost:8080/api/midwife/${midwifeId}/mother/${id}/vaccinations`, formData);
             setShowForm(false);
             fetchVaccines();
         } catch (err) { alert('Failed to add vaccination record'); }
@@ -259,7 +252,7 @@ const MidwifeMotherVaccinations = ({ midwifeId }) => {
 
     const handleUpdate = async (vaccId, data) => {
         try {
-            await axios.put(`http://localhost:8081/api/midwife/vaccination/${vaccId}`, data);
+            await axios.put(`http://localhost:8080/api/midwife/vaccination/${vaccId}`, data);
             fetchVaccines();
         } catch (err) { alert('Failed to update record'); }
     };
@@ -267,7 +260,7 @@ const MidwifeMotherVaccinations = ({ midwifeId }) => {
     const handleDelete = async (vaccId) => {
         if (!window.confirm('Are you sure you want to delete this vaccination record?')) return;
         try {
-            await axios.delete(`http://localhost:8081/api/midwife/vaccination/${vaccId}`);
+            await axios.delete(`http://localhost:8080/api/midwife/vaccination/${vaccId}`);
             fetchVaccines();
         } catch (err) { alert('Failed to delete record'); }
     };
@@ -348,15 +341,15 @@ const MidwifeAnnouncements = ({ user }) => {
 
     useEffect(() => {
         if (!user?.id) return;
-        axios.get(`http://localhost:8081/api/midwife/announcements`)
+        axios.get(`http://localhost:8080/api/midwife/announcements`)
             .then(res => setAnnouncements(res.data)).catch(console.error);
-        axios.get(`http://localhost:8081/api/midwife/${user.id}/announcements/read-status`)
+        axios.get(`http://localhost:8080/api/midwife/${user.id}/announcements/read-status`)
             .then(res => setReadIds(res.data)).catch(console.error);
     }, [user]);
 
     const handleMarkRead = async (annId) => {
         try {
-            await axios.post(`http://localhost:8081/api/midwife/${user.id}/announcements/${annId}/read`);
+            await axios.post(`http://localhost:8080/api/midwife/${user.id}/announcements/${annId}/read`);
             setReadIds([...readIds, annId]);
         } catch (err) { console.error(err); }
     };

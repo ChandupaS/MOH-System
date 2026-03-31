@@ -49,9 +49,9 @@ const PregnancyDetails = ({ midwifeId, motherUserId, readOnly }) => {
             try {
                 let res;
                 if (midwifeId) {
-                    res = await axios.get(`http://localhost:8081/api/midwife/${midwifeId}/mother/${id}`);
+                    res = await axios.get(`http://localhost:8080/api/midwife/${midwifeId}/mother/${id}`);
                 } else {
-                    res = await axios.get(`http://localhost:8081/api/mother/${motherUserId}/profile`);
+                    res = await axios.get(`http://localhost:8080/api/mother/${motherUserId}/profile`);
                 }
                 const data = res.data;
                 setProfile(data);
@@ -133,7 +133,7 @@ const PregnancyDetails = ({ midwifeId, motherUserId, readOnly }) => {
             const payload = { ...form };
             payload.healthConditions = payload.healthConditions.join(', ');
             
-            await axios.put(`http://localhost:8081/api/midwife/${midwifeId}/mother/${id}`, payload);
+            await axios.put(`http://localhost:8080/api/midwife/${midwifeId}/mother/${id}`, payload);
             setIsEditing(false);
             // Refresh logic if needed
         } catch (err) {

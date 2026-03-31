@@ -232,14 +232,13 @@ def main():
     print()
 
     # ── 7. SEED — create default doctor and midwife accounts ──────────────────────
-    print("Seeding default doctor, midwife, and mother accounts...")
+    print("Seeding default doctor and midwife accounts...")
     run(conn, """
         INSERT INTO users (id, name, email, password, role)
         VALUES 
             (1, 'Dr. Admin', 'doctor@suwa.lk', 'doctor123', 'DOCTOR'),
             (2, 'Midwife Malabe', 'midwife@suwasewana.lk', 'Midwife@1234', 'MIDWIFE'),
-            (3, 'Midwife Kaduwela', 'midwife2@suwasewana.lk', 'Midwife@1234', 'MIDWIFE'),
-            (4, 'Sunitha Perera', 'mother@suwasewana.lk', 'Mother@1234', 'MOTHER')
+            (3, 'Midwife Kaduwela', 'midwife2@suwasewana.lk', 'Midwife@1234', 'MIDWIFE')
         ON CONFLICT (id) DO UPDATE SET email=EXCLUDED.email;
     """, "Seed users")
 
@@ -250,15 +249,6 @@ def main():
             (3, 'Kaduwela')
         ON CONFLICT (user_id) DO NOTHING;
     """, "Seed midwife_profiles")
-
-    run(conn, """
-        INSERT INTO mother_profiles (user_id, nic, gn_division, health_conditions, contact_number, address, 
-                                     edd, lmp, gravida, para, blood_group, height, weight, allergies, registration_date)
-        VALUES 
-            (4, '123456789V', 'Malabe East', 'None', '0771234567', '123 Main Street, Malabe', 
-             '2026-06-15', '2025-09-14', 1, 0, 'O+', '165', '68', 'Penicillin', NOW())
-        ON CONFLICT (user_id) DO NOTHING;
-    """, "Seed mother_profile")
 
     # Reset sequences so new inserts don't conflict
     run(conn, "SELECT setval('users_id_seq', (SELECT MAX(id) FROM users));", "Reset users sequence")

@@ -8,7 +8,7 @@ const LandingPage = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        axios.get('http://localhost:8081/api/stats/landing')
+        axios.get('http://localhost:8080/api/stats/landing')
             .then(res => setStats(res.data))
             .catch(err => console.error("Stats fetch failed:", err));
     }, []);

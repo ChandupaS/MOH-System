@@ -7,10 +7,22 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/api': {
-        target: 'http://localhost:8081',
+        target: 'http://localhost:8080',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
       }
     }
+  },
+  optimizeDeps: {
+    include: [
+      'react',
+      'react-dom',
+      'react-dom/client',
+      'react-router-dom',
+      'axios',
+      'lucide-react'
+    ],
+    noDiscovery: true,
+    holdUntilCrawlEnd: false
   }
 })

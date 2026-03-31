@@ -1,40 +1,19 @@
 package com.maternalcare.controllers;
 
-import java.time.LocalDate;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.maternalcare.entities.Announcement;
-import com.maternalcare.entities.AnnouncementReadStatus;
-import com.maternalcare.entities.MidwifeProfile;
-import com.maternalcare.entities.MotherProfile;
-import com.maternalcare.entities.User;
-import com.maternalcare.entities.UserRole;
-import com.maternalcare.entities.VaccinationSchedule;
-import com.maternalcare.repositories.AnnouncementReadStatusRepository;
-import com.maternalcare.repositories.AnnouncementRepository;
-import com.maternalcare.repositories.HomeVisitRepository;
-import com.maternalcare.repositories.MidwifeProfileRepository;
-import com.maternalcare.repositories.MotherProfileRepository;
-import com.maternalcare.repositories.VaccinationScheduleRepository;
+import com.maternalcare.entities.*;
+import com.maternalcare.repositories.*;
 import com.maternalcare.services.MotherService;
 import com.maternalcare.services.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/midwife")
-@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:5174", "http://localhost:5175", "http://localhost:5176"})
+@CrossOrigin(origins = "http://localhost:5173")
 public class MidwifeController {
     @Autowired private MotherProfileRepository motherProfileRepository;
     @Autowired private HomeVisitRepository homeVisitRepository;
@@ -176,7 +155,35 @@ public class MidwifeController {
     public ResponseEntity<?> getDivisionVisits(@PathVariable Long midwifeId) {
         return midwifeProfileRepository.findByUserId(midwifeId).map(midwife -> {
             LocalDate today = LocalDate.now();
-            return ResponseEntity.ok(Map.of("today", homeVisitRepository.findByMotherGnDivisionAndScheduledDate(midwife.getGnDivision(), today), "thisWeek", homeVisitRepository.findByMotherGnDivisionAndScheduledDateBetween(midwife.getGnDivision(), today, today.plusWeeks(1))));
+            String div = midwife.getGnDivision();
+
+            // Auto-mark overdue visits as Missed
+            List<HomeVisit> overdue = homeVisitRepository.findOverdueByDivision(div, today);
+            for (HomeVisit v : overdue) {
+                v.setStatus("Missed");
+            }
+            if (!overdue.isEmpty()) homeVisitRepository.saveAll(overdue);
+
+            List<HomeVisit> todayVisits = homeVisitRepository.findByMotherGnDivisionAndScheduledDate(div, today);
+            List<HomeVisit> weekVisits = homeVisitRepository.findByMotherGnDivisionAndScheduledDateBetween(div, today, today.plusWeeks(1));
+            List<HomeVisit> allVisits = homeVisitRepository.findByMotherGnDivision(div);
+
+            long totalCount = allVisits.size();
+            long completedCount = allVisits.stream().filter(v -> "Completed".equals(v.getStatus())).count();
+            long pendingCount = allVisits.stream().filter(v -> "Upcoming".equals(v.getStatus()) && !v.getScheduledDate().isBefore(today)).count();
+            long overdueCount = allVisits.stream().filter(v -> "Missed".equals(v.getStatus())).count();
+
+            return ResponseEntity.ok(java.util.Map.of(
+                "today", todayVisits,
+                "thisWeek", weekVisits,
+                "all", allVisits,
+                "stats", java.util.Map.of(
+                    "total", totalCount,
+                    "completed", completedCount,
+                    "pending", pendingCount,
+                    "overdue", overdueCount
+                )
+            ));
         }).orElse(ResponseEntity.status(403).build());
     }
 
@@ -211,6 +218,15 @@ public class MidwifeController {
         return homeVisitRepository.findById(id).map(visit -> {
             if (data.containsKey("status")) visit.setStatus(data.get("status"));
             if (data.containsKey("notes")) visit.setMidwifeNotes(data.get("notes"));
+            if (data.containsKey("bloodPressure")) visit.setBloodPressure(data.get("bloodPressure"));
+            if (data.containsKey("weightKg")) visit.setWeightKg(data.get("weightKg"));
+            if (data.containsKey("temperature")) visit.setTemperature(data.get("temperature"));
+            if (data.containsKey("pulseRate")) visit.setPulseRate(data.get("pulseRate"));
+            if (data.containsKey("fundalHeight")) visit.setFundalHeight(data.get("fundalHeight"));
+            if (data.containsKey("fetalHeartRate")) visit.setFetalHeartRate(data.get("fetalHeartRate"));
+            if (data.containsKey("rescheduledDate") && data.get("rescheduledDate") != null && !data.get("rescheduledDate").isEmpty()) {
+                visit.setRescheduledDate(LocalDate.parse(data.get("rescheduledDate")));
+            }
             if ("Completed".equals(data.get("status"))) visit.setCompletedAt(java.time.LocalDateTime.now());
             return ResponseEntity.ok(homeVisitRepository.save(visit));
         }).orElse(ResponseEntity.notFound().build());

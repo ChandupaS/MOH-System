@@ -43,7 +43,7 @@ const SymptomTracker = ({ profile }) => {
         if (!profile?.id) return;
         setLoadingLogs(true);
         try {
-            const res = await axios.get(`http://localhost:8081/api/mother/symptoms/${profile.id}`);
+            const res = await axios.get(`http://localhost:8080/api/mother/symptoms/${profile.id}`);
             setLogs(res.data);
             setShowLogs(true);
         } catch (error) {
@@ -83,7 +83,7 @@ const SymptomTracker = ({ profile }) => {
         };
 
         try {
-            await axios.post('http://localhost:8081/api/mother/symptoms', payload);
+            await axios.post('http://localhost:8080/api/mother/symptoms', payload);
             setSubmitSuccess(true);
             setTimeout(() => setSubmitSuccess(false), 3000);
 

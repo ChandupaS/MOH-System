@@ -25,7 +25,7 @@ const DoctorDashboard = () => {
             navigate('/staff-login');
             return;
         }
-        axios.get('http://localhost:8081/api/stats/doctor')
+        axios.get('http://localhost:8080/api/stats/doctor')
             .then(res => setByStats(res.data))
             .catch(err => {
                 console.error(err);
@@ -37,14 +37,14 @@ const DoctorDashboard = () => {
     }, [user, navigate]);
 
     const fetchMothers = () => {
-        axios.get('http://localhost:8081/api/doctor/mothers')
+        axios.get('http://localhost:8080/api/doctor/mothers')
             .then(res => setMothersList(res.data))
             .catch(err => console.error(err))
             .finally(() => setLoadingMothers(false));
     };
 
     const fetchAnnouncements = () => {
-        axios.get('http://localhost:8081/api/doctor/announcements')
+        axios.get('http://localhost:8080/api/doctor/announcements')
             .then(res => setAnnouncementsList(res.data))
             .catch(err => console.error(err));
     };
@@ -52,11 +52,11 @@ const DoctorDashboard = () => {
     const handleMidwifeSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:8081/api/doctor/add-midwife', midwifeForm);
+            await axios.post('http://localhost:8080/api/doctor/add-midwife', midwifeForm);
             setMidwifeMsg('Midwife added successfully!');
             setMidwifeForm({ name: '', email: '', password: '', gnDivision: 'Malabe East' });
             // refresh stats
-            axios.get('http://localhost:8081/api/stats/doctor').then(res => setByStats(res.data));
+            axios.get('http://localhost:8080/api/stats/doctor').then(res => setByStats(res.data));
             setTimeout(() => setMidwifeMsg(''), 3000);
         } catch (err) {
             setMidwifeMsg('Error adding midwife.');
@@ -67,11 +67,11 @@ const DoctorDashboard = () => {
         e.preventDefault();
         try {
             if (editingId) {
-                await axios.put(`http://localhost:8081/api/doctor/announcements/${editingId}`, announcementForm);
+                await axios.put(`http://localhost:8080/api/doctor/announcements/${editingId}`, announcementForm);
                 setAnnouncementMsg('Announcement updated successfully!');
             } else {
                 const payload = { ...announcementForm, postedBy: { id: user.id } };
-                await axios.post('http://localhost:8081/api/doctor/announcements', payload);
+                await axios.post('http://localhost:8080/api/doctor/announcements', payload);
                 setAnnouncementMsg('Announcement posted successfully!');
             }
             setAnnouncementForm({ title: '', body: '', priority: 'General', target: 'Both' });
@@ -91,7 +91,7 @@ const DoctorDashboard = () => {
     const handleAnnouncementDelete = async (id) => {
         if (!window.confirm("Are you sure you want to delete this announcement?")) return;
         try {
-            await axios.delete(`http://localhost:8081/api/doctor/announcements/${id}`);
+            await axios.delete(`http://localhost:8080/api/doctor/announcements/${id}`);
             fetchAnnouncements();
         } catch (err) {
             alert('Error deleting announcement.');
